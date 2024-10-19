@@ -6,6 +6,7 @@ from tkinter import messagebox
 
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
+setting_file = 'setting.json'
 
 # JSON 파일 읽기 함수
 def read_json(file_path):
@@ -13,7 +14,7 @@ def read_json(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
-        return {"users": []}
+        return {}
 
 # JSON 파일 쓰기 함수
 def write_json(file_path, data):
@@ -28,6 +29,8 @@ def add_streamer():
         messagebox.showerror("입력 오류", "모든 필드를 입력하세요!")
         return
     data = read_json(json_file_path)
+    if "users" not in data:
+        data["users"] = []
     data["users"].append({"id": len(data["users"]) + 1, "name": name, "chid": id, "onlive": False, "bangonallrm": False, "bangoffallrm": False, "livetitle": "제목 없음"})
     write_json(json_file_path, data)
     messagebox.showinfo("성공", "스트리머가 추가되었습니다.")
@@ -39,8 +42,9 @@ def add_streamer():
 def refresh_streamer_list():
     listbox.delete(0, END)
     data = read_json(json_file_path)
-    for user in data["users"]:
-        listbox.insert(END, f"이름: {user['name']}, ID: {user['chid']}, onlive: {user['onlive']}")
+    if "users" in data:
+        for user in data["users"]:
+            listbox.insert(END, f"이름: {user['name']}, ID: {user['chid']}, onlive: {user['onlive']}")
 
 # 스트리머 삭제 함수
 def delete_streamer():
@@ -76,9 +80,33 @@ def reset_streamer_list():
             messagebox.showinfo("성공", "스트리머 목록이 초기화 되었습니다.")
             refresh_streamer_list()
 
+bangoff_set = False
+
+# 방종 알람 설정 파일 업데이트 함수
+def update_bangoff_setting():
+    data = read_json(setting_file)
+    if "setting" not in data:
+        data["setting"] = {}
+    data["setting"]["bangoff"] = bangoff_set
+    write_json(setting_file, data)
+    print(f"방종 알람 설정이 {bangoff_set}으로 저장되었습니다.")
+
+def bangoff_setset():
+    global bangoff_set
+    data = read_json(setting_file)
+    bangoff_set = data['setting']["bangoff"]
+bangoff_setset
+
+# 방종 알람 버튼 동작 함수
+def bangoff_set_button_command():
+    global bangoff_set
+    bangoff_set = not bangoff_set
+    bangoff_set_button.config(text=f"방종 알람 {bangoff_set}")
+    update_bangoff_setting()
+
 # tkinter GUI 설정
 tk = Tk()
-tk.geometry("600x500")
+tk.geometry("600x600")
 tk.title("치지직 뱅온 알림 설정기")
 
 frame = Frame(tk)
@@ -108,6 +136,12 @@ delete_button.pack(pady=5)
 
 reset_button = Button(tk, text="스트리머 목록 초기화", command=reset_streamer_list, font=("굴림", 12))
 reset_button.pack(pady=5)
+
+
+
+# 방종 알람 버튼 추가
+bangoff_set_button = Button(tk, text=f"방종 알람 현제 상태 : {bangoff_set}", command=bangoff_set_button_command, font=("굴림", 12))
+bangoff_set_button.pack(pady=5)
 
 refresh_streamer_list()
 

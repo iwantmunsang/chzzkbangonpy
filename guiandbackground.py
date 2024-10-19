@@ -9,6 +9,7 @@ import subprocess
 
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
+setting_json = 'setting.json'
 
 # JSON 파일 읽기 함수
 def read_json(file_path):
@@ -67,18 +68,18 @@ def api_get():
                     user['livetitle'] = strimingname
             if not openlive:
                 if not user['bangoffallrm']:
+                    setting_val = read_json(setting_json)
                     user['bangoffallrm'] = True
                     user['bangonallrm'] = False
-                    notification.notify(
-                        title=f"{name}님이 방송을 종료 하였습니다",
-                        message=f"{name}님이 방송을 종료 하였습니다\n이제 현생 살아~~",
-                        timeout=10
-                    )
+                    if setting_val['setting']["bangoff"]:
+                        notification.notify(
+                            title=f"{name}님이 방송을 종료 하였습니다",
+                            message=f"{name}님이 방송을 종료 하였습니다",
+                            timeout=10
+                        )
             time.sleep(0.8)
-        
         # JSON 파일에 업데이트된 데이터 쓰기
         write_json(json_file_path, data)
-        
     except Exception as e:
         print(f"Error: {e}")
 

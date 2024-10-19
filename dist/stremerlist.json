@@ -1,22 +1,3 @@
 {
-    "users": [
-        {
-            "id": 1,
-            "name": "pig",
-            "chid": "bae2142e03116206963eea4bc15dc402",
-            "onlive": false,
-            "bangonallrm": false,
-            "bangoffallrm": true,
-            "livetitle": "제목 없음"
-        },
-        {
-            "id": 2,
-            "name": "님이 정한 이름",
-            "chid": "5d53f8fa5bef9b1bd4dc884f9907c079",
-            "onlive": true,
-            "bangonallrm": true,
-            "bangoffallrm": false,
-            "livetitle": "[명훈] 명조 마지막 스토리 가봅니다!!!"
-        }
-    ]
+    "users": []
 }
