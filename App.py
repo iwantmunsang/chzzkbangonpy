@@ -33,7 +33,7 @@ while True:
             print("확인해 주세요!")
             print(f"이름 : {name}\nid : {id}")
             data = read_json(json_file_path)
-            data["users"].append({"id": len(data["users"]) + 1, "name": name, "chid": id,"onlive":False})
+            data["users"].append({"id": len(data["users"]) + 1, "name": name, "chid": id,"onlive":False,"bangonallrm":False})
             write_json(json_file_path, data)
             print("스트리머가 추가되었습니다.")
             print("엔터를 입력하시면 초기 화면으로 돌아 갑니다")
