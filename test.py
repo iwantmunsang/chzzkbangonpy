@@ -1,23 +1,20 @@
-import requests
+import sqlite3
+import os
 
-url = 'https://api.chzzk.naver.com/service/v1/channels/9ae7d38b629b78f48e49fb3106218ff5'
+# 쿠키 파일 경로 설정
+cookie_path = "C:/Users/USER/AppData/Local/Google/Chrome/User Data/Default/Cookies"
 
-# 해더 설정
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Connection': 'keep-alive',
-    'Referer': 'https://www.google.com/',
-    'Upgrade-Insecure-Requests': '1'
-}
 
-response = requests.get(url, headers=headers)
+# SQLite 데이터베이스 연결
+conn = sqlite3.connect(cookie_path)
+cursor = conn.cursor()
 
-# 응답을 JSON 형태로 변환
-data = response.json()
+# 쿠키 테이블에서 데이터 가져오기
+cursor.execute("SELECT host_key, name, value FROM cookies")
 
-# content 안에 있는 openlive 값 추출
-openlive = data.get('content', {}).get('openLive')
+# 쿠키 출력
+for row in cursor.fetchall():
+    print(row)
 
-print(f"Open Live: {openlive}")
+# 연결 닫기
+conn.close()
