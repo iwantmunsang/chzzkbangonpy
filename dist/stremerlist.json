@@ -1,3 +1,13 @@
 {
-    "users": []
+    "users": [
+        {
+            "id": 1,
+            "name": "asd",
+            "chid": "ec2b611d28ad529208b3bfe0265062de",
+            "onlive": true,
+            "bangonallrm": true,
+            "bangoffallrm": false,
+            "livetitle": "치지직 비빔대왕 길비빔의 비빔밥 두비두"
+        }
+    ]
 }

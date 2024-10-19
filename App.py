@@ -70,7 +70,7 @@ def reset_streamer_list():
             "지금부터는"
         ]
         random_monjang = random.choice(monjang)
-        if messagebox.askyesno("문장 확인", f"이 문장을 따라 입력해주세요: {random_monjang}"):
+        if messagebox.askyesno("문장 확인", f"스트리머 목록을 정말 삭제 하시겠습니까?"):
             data = {"users": []}
             write_json(json_file_path, data)
             messagebox.showinfo("성공", "스트리머 목록이 초기화 되었습니다.")
