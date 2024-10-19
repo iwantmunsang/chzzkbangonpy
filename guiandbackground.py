@@ -4,6 +4,7 @@ import os
 import requests
 import time
 import webbrowser
+from plyer import notification
 
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
@@ -42,9 +43,28 @@ def api_get():
             api_data = response.json()
             # content 안에 있는 openlive 값 추출
             openlive = api_data.get('content', {}).get('openLive')
+            name = api_data.get('content', {}).get('channelName')
             print(f"Open Live: {openlive}")
             # JSON 데이터에 onlive 값 반영
             user['onlive'] = openlive
+            if openlive:
+                if not user["bangonallrm"]:
+                    notification.notify(
+                        title=f"{name}",
+                        message=f"{name}님이 방송중 입니다!!",
+                        timeout=10
+                    )
+                    user['bangonallrm'] = True
+                    user['bangoffallrm'] = False
+            if not openlive:
+                if not user['bangoffallrm']:
+                    user['bangoffallrm'] = True
+                    user['bangonallrm'] = False
+                    notification.notify(
+                            title=f"{name}님이 방송을 종료 하였습니다",
+                            message=f"{name}님이 방송을 종료 하였습니다\n이제 현생 살아~~",
+                            timeout=10
+                        )
             time.sleep(1)
         
         # JSON 파일에 업데이트된 데이터 쓰기
@@ -88,7 +108,7 @@ header_label.pack()
 # 초기 업데이트 및 주기적 업데이트 설정
 api_get()
 update_labels()
-tk.after(60000, api_get)  # 1분마다 API 요청
+tk.after(60000, lambda: api_get())  # 1분마다 API 요청
 
 # 이벤트 루프 시작
 tk.mainloop()

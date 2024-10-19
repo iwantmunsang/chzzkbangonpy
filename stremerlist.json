@@ -5,21 +5,24 @@
             "name": "테스트1",
             "chid": "9ae7d38b629b78f48e49fb3106218ff5",
             "onlive": false,
-            "bangonallrm": false
+            "bangonallrm": false,
+            "bangoffallrm": true
         },
         {
             "id": 2,
             "name": "테스트3",
             "chid": "bae2142e03116206963eea4bc15dc402",
             "onlive": false,
-            "bangonallrm": false
+            "bangonallrm": false,
+            "bangoffallrm": true
         },
         {
             "id": 3,
             "name": "2",
             "chid": "9e731707f6524b88436c5b3ede3a9848",
             "onlive": true,
-            "bangonallrm": false
+            "bangonallrm": true,
+            "bangoffallrm": false
         }
     ]
 }
