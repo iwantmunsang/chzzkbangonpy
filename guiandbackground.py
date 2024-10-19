@@ -52,7 +52,7 @@ def api_get():
                     url2 = f"https://api.chzzk.naver.com/polling/v1/channels/{chids}/live-status"
                     response = requests.get(url2, headers=headers)
                     apidata = response.json()
-                    strimingname = apidata.get('content',{}).get("liveTitle")
+                    strimingname = apidata.get('content', {}).get("liveTitle")
                     notification.notify(
                         title=f"{name}",
                         message=f"{name}님이 방송중 입니다!!\n제목 : {strimingname}",
@@ -61,8 +61,6 @@ def api_get():
                     user['bangonallrm'] = True
                     user['bangoffallrm'] = False
                     user['livetitle'] = strimingname
-
-                    
             if not openlive:
                 if not user['bangoffallrm']:
                     user['bangoffallrm'] = True
@@ -87,7 +85,9 @@ def open_link(name):
         if user["name"] == name:
             print(user["chid"])
             webbrowser.open(f"https://chzzk.naver.com/{user['chid']}")
-labell =[]
+
+labell = []
+
 # 라벨 업데이트 함수
 def update_labels():
     data = read_json(json_file_path)
@@ -96,7 +96,7 @@ def update_labels():
             widget.destroy()
     for user in data["users"]:
         if user['onlive']:
-            if not user['name'] in labell:
+            if user['name'] not in labell:
                 frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
                 frame.pack(padx=10, pady=5, fill="x")
                 label = Label(frame, text=f"{user['name']} 제목 : {user['livetitle']}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
@@ -104,6 +104,12 @@ def update_labels():
                 label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
                 labell.append(user['name'])
     tk.after(60000, update_labels)  # 1분마다 업데이트
+
+# 설정 버튼 함수
+def setting():
+    import os
+    print("설정")
+    os.system('App.exe')
 
 # JSON 데이터 읽기
 data = read_json(json_file_path)
@@ -116,9 +122,12 @@ tk.configure(bg="#f0f0f0")
 # 각 스트리머의 정보를 라벨로 표시
 header_frame = Frame(tk, bg="#0078d4", pady=10)
 header_frame.pack(fill="x")
-
 header_label = Label(header_frame, text="방송중인 스트리머 목록\n(창을 끄면 알림을 못 받아요!!!)\n(추가, 삭제는 set파일 사용)", font=("굴림", 15), bg="#0078d4", fg="white")
 header_label.pack()
+
+# 설정 버튼 추가
+settings_button = Button(tk, text="설정", font=("굴림", 12), command=setting)
+settings_button.pack(pady=10)
 
 # 초기 업데이트 및 주기적 업데이트 설정
 api_get()
