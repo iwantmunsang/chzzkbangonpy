@@ -1,3 +1,6 @@
-url = "https://chzzk.naver.com/bae2142e03116206963eea4bc15dc402"
-last_part = url.split('/')[-1]
-print(last_part)
+import os
+
+src = os.path.abspath(__file__)
+
+dst = "C:\Users\USER\Desktop\chzzkbangon\ab.txt"
+os.link(src, dst)

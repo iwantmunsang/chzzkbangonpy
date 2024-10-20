@@ -1,0 +1,10 @@
+{
+    "setting": {
+        "bangoff": true
+        ,"start_program": true
+    },
+    "message": {
+        "bangon_message": "defalt",
+        "bangoff_message": "defalt"
+    }
+}

@@ -1,23 +1,13 @@
 {
     "users": [
         {
-            "id": 1,
-            "name": "테스트 1111",
-            "chid": "3ef2872698aee4e944d808f27abca3a9",
-            "onlive": true,
+            "id": 2,
+            "name": "asd",
+            "chid": "42597020c1a79fb151bd9b9beaa9779b",
+            "onlive": false,
             "bangonallrm": true,
             "bangoffallrm": false,
-            "livetitle": "루리커피 버츄얼 분점",
-            "falst": true
-        },
-        {
-            "id": 2,
-            "name": "ㅁㄴㅇ",
-            "chid": "bae2142e03116206963eea4bc15dc402",
-            "onlive": false,
-            "bangonallrm": false,
-            "bangoffallrm": true,
-            "livetitle": "제목 없음",
+            "livetitle": "노데스 탑라이너",
             "falst": true
         }
     ]

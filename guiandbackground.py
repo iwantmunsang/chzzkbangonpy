@@ -7,6 +7,8 @@ import webbrowser
 from plyer import notification
 import subprocess
 from tkinter import messagebox
+import winshell
+import shutil
 
 falstbagoffallrm = False
 
@@ -116,39 +118,57 @@ def open_link(name):
 labell = []
 
 # 라벨 업데이트 함수
+# 라벨 업데이트 함수
+# 프레임을 저장할 딕셔너리
+frames = {}
+
 def update_labels():
     global falstbagoffallrm
     data = read_json(json_file_path)
-    for widget in tk.winfo_children():
-        if isinstance(widget, Label) and widget != header_label:
-            widget.destroy()
+
+    # 현재 활성화된 사용자 ID 목록
+    active_user_ids = {user['id'] for user in data["users"] if user['onlive']}
+
+    # 프레임을 유지할 사용자 ID 목록
+    current_user_ids = set(frames.keys())
+
+    # 프레임 삭제: JSON에 없는 사용자 ID에 대한 프레임 제거
+    for user_id in current_user_ids - active_user_ids:
+        frame = frames.pop(user_id, None)
+        if frame:
+            frame.destroy()  # 프레임 삭제
+            labell.remove(user_id)  # 라벨에서 ID 제거
+
     for user in data["users"]:
         if user['onlive']:
-            if user['name'] not in labell:
+            if user['id'] not in labell:
+                # 새로운 프레임과 라벨 생성
                 frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
                 frame.pack(padx=10, pady=5, fill="x")
                 label = Label(frame, text=f"{user['name']} | 제목 : {user['livetitle']}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
                 label.pack()
                 label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
-                labell.append(user['name'])
+                labell.append(user['id'])  # 라벨에 이름 추가
+                frames[user['id']] = frame  # 프레임을 딕셔너리에 저장
                 falstbagoffallrm = True
+                # onlive가 False인 경우 프레임 삭제
+        elif user['id'] in labell:
+            # 해당 프레임 제거
+            frame = frames.pop(user['id'], None)
+            if frame:
+                frame.destroy()  # 프레임 삭제
+                labell.remove(user['id'])  # 라벨에서 ID 제거
+
+
+    print(f"{labell} 라벨 라벨")
     tk.after(60000, update_labels)  # 1분마다 업데이트
+
+
+
 
 def reload_button():
     try:
-        data = read_json(json_file_path)
-        for widget in tk.winfo_children():
-            if isinstance(widget, Label) and widget != header_label:
-                widget.destroy()
-        for user in data["users"]:
-            if user['onlive']:
-                if user['name'] not in labell:
-                    frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
-                    frame.pack(padx=10, pady=5, fill="x")
-                    label = Label(frame, text=f"{user['name']} | 제목 : {user['livetitle']}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
-                    label.pack()
-                    label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
-                    labell.append(user['name'])
+        update_labels()
         api_get()
     except Exception as e:
         print(e)
@@ -159,6 +179,39 @@ def reload_button():
 def setting():
     print("설정")
     subprocess.Popen(['app.exe'], shell=True)
+
+
+def start_program_function():
+    data = read_json(setting_json)
+    start_program = data["setting"]["start_program"]
+    
+    # start_program이 False일 때만 실행
+    if not start_program:
+        abc = os.getcwd()  # 현재 작업 디렉토리 가져오기
+        wichi = os.path.join(abc, "치지직뱅온알람기.lnk")  # 경로 설정 (os.path.join 사용)
+        
+        # 복사할 대상 경로 설정
+        target_path = r"C:\Users\USER\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\치지직뱅온알람기.lnk"
+        
+        # 파일 복사
+        if os.path.exists(wichi):
+            try:
+                shutil.copyfile(wichi, target_path)  # 원본 파일과 대상 파일 경로 제공
+                print("파일이 성공적으로 복사되었습니다.")
+                
+                # JSON 설정 업데이트
+                data["setting"]["start_program"] = True
+                write_json(setting_json, data)  # 설정 업데이트
+            except Exception as e:
+                print(f"파일 복사 중 오류 발생: {e}")
+        else:
+            print("원본 파일을 찾을 수 없습니다.")
+    else:
+        print("이미 파일이 존재합니다.")
+
+
+start_program_function()
+
 
 # JSON 데이터 읽기
 data = read_json(json_file_path)
@@ -181,6 +234,8 @@ settings_button.pack(pady=10)
 # 스트리밍 상태 로드 버튼 추가 (오른쪽 아래 배치)
 api_get_reload = Button(tk, text="스트리밍 상태 리로드", font=("굴림", 12),bg="yellow", command=reload_button)
 api_get_reload.place(relx=1, rely=1, anchor="se")
+
+
 
 
 # 초기 업데이트 및 주기적 업데이트 설정

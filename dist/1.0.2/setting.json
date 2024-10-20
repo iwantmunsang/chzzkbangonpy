@@ -1,9 +1,0 @@
-{
-    "setting": {
-        "bangoff": true
-    },
-    "message": {
-        "bangon_message": "defalt",
-        "bangoff_message": "defalt"
-    }
-}
