@@ -28,12 +28,17 @@ def add_streamer():
     if not id or not name:
         messagebox.showerror("입력 오류", "모든 필드를 입력하세요!")
         return
+    #https://chzzk.naver.com/bae2142e03116206963eea4bc15dc402
+    if "chzzk.naver.com" in id:
+        last_part = id.split('/')[-1]
+        id = last_part
+        print(id)
+    print(id)
     data = read_json(json_file_path)
     if "users" not in data:
         data["users"] = []
     data["users"].append({"id": len(data["users"]) + 1, "name": name, "chid": id, "onlive": False, "bangonallrm": False, "bangoffallrm": False, "livetitle": "제목 없음", "falst":True})
     write_json(json_file_path, data)
-    messagebox.showinfo("성공", "스트리머가 추가되었습니다.")
     id_entry.delete(0, END)
     name_entry.delete(0, END)
     refresh_streamer_list()
