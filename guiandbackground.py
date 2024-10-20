@@ -6,6 +6,9 @@ import time
 import webbrowser
 from plyer import notification
 import subprocess
+from tkinter import messagebox
+
+falstbagoffallrm = False
 
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
@@ -28,6 +31,7 @@ def write_json(file_path, data):
 def api_get():
     try:
         data = read_json(json_file_path)
+        setting = read_json(setting_json)
         for user in data["users"]:
             chids = user["chid"]
             url = f'https://api.chzzk.naver.com/service/v1/channels/{chids}'
@@ -50,6 +54,8 @@ def api_get():
             print(f"Open Live: {openlive}")
             # JSON 데이터에 onlive 값 반영
             user['onlive'] = openlive
+            # if not user['falst']:
+            #     user['falst'] = False
             if openlive:
                 url2 = f"https://api.chzzk.naver.com/polling/v1/channels/{chids}/live-status"
                 response = requests.get(url2, headers=headers)
@@ -57,10 +63,19 @@ def api_get():
                 strimingname = apidata.get('content', {}).get("liveTitle")
                 print(strimingname)
                 user['livetitle'] = strimingname
-                if not user["bangonallrm"]:
+                if not user["bangonallrm"] and setting['message']['bangon_message'] == "defalt":
                     notification.notify(
                         title=f"{name}",
                         message=f"{name}님이 방송중 입니다!!\n제목 : {strimingname}",
+                        timeout=10
+                    )
+                    user['bangonallrm'] = True
+                    user['bangoffallrm'] = False
+                    user['livetitle'] = strimingname
+                elif not setting['message']['bangon_message'] == "defalt" and not user["bangonallrm"]:
+                    notification.notify(
+                        title=f"{name}",
+                        message=f"{setting['message']['bangon_message']}\n제목 : {strimingname}",
                         timeout=10
                     )
                     user['bangonallrm'] = True
@@ -71,13 +86,20 @@ def api_get():
                     setting_val = read_json(setting_json)
                     user['bangoffallrm'] = True
                     user['bangonallrm'] = False
-                    if setting_val['setting']["bangoff"]:
-                        notification.notify(
-                            title=f"{name}님이 방송을 종료 하였습니다",
-                            message=f"{name}님이 방송을 종료 하였습니다",
-                            timeout=10
-                        )
-            time.sleep(0.8)
+                    if falstbagoffallrm:
+                        if setting_val['setting']["bangoff"] and setting['message']['bangoff_message'] == "defalt":
+                            notification.notify(
+                                title=f"{name}님이 방송을 종료 하였습니다",
+                                message=f"{name}님이 방송을 종료 하였습니다",
+                                timeout=10
+                            )
+                        elif setting_val['setting']["bangoff"] and not setting['message']['bangoff_message'] == "defalt":
+                            notification.notify(
+                                title=f"{name}님이 방송을 종료 하였습니다",
+                                message=f"{setting['message']['bangoff_message']}",
+                                timeout=10
+                            )
+        time.sleep(0.8)
         # JSON 파일에 업데이트된 데이터 쓰기
         write_json(json_file_path, data)
     except Exception as e:
@@ -95,6 +117,7 @@ labell = []
 
 # 라벨 업데이트 함수
 def update_labels():
+    global falstbagoffallrm
     data = read_json(json_file_path)
     for widget in tk.winfo_children():
         if isinstance(widget, Label) and widget != header_label:
@@ -104,11 +127,33 @@ def update_labels():
             if user['name'] not in labell:
                 frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
                 frame.pack(padx=10, pady=5, fill="x")
-                label = Label(frame, text=f"{user['name']} 제목 : {user['livetitle']}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
+                label = Label(frame, text=f"{user['name']} | 제목 : {user['livetitle']}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
                 label.pack()
                 label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
                 labell.append(user['name'])
+                falstbagoffallrm = True
     tk.after(60000, update_labels)  # 1분마다 업데이트
+
+def reload_button():
+    try:
+        data = read_json(json_file_path)
+        for widget in tk.winfo_children():
+            if isinstance(widget, Label) and widget != header_label:
+                widget.destroy()
+        for user in data["users"]:
+            if user['onlive']:
+                if user['name'] not in labell:
+                    frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
+                    frame.pack(padx=10, pady=5, fill="x")
+                    label = Label(frame, text=f"{user['name']} | 제목 : {user['livetitle']}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
+                    label.pack()
+                    label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
+                    labell.append(user['name'])
+        api_get()
+    except Exception as e:
+        print(e)
+        messagebox.showerror("에러 발생", f"알수 없는 오류 발생 : {e}")
+
 
 # 설정 버튼 함수
 def setting():
@@ -132,6 +177,11 @@ header_label.pack()
 # 설정 버튼 추가
 settings_button = Button(tk, text="설정", font=("굴림", 12), command=setting)
 settings_button.pack(pady=10)
+
+# 스트리밍 상태 로드 버튼 추가 (오른쪽 아래 배치)
+api_get_reload = Button(tk, text="스트리밍 상태 리로드", font=("굴림", 12),bg="yellow", command=reload_button)
+api_get_reload.place(relx=1, rely=1, anchor="se")
+
 
 # 초기 업데이트 및 주기적 업데이트 설정
 api_get()

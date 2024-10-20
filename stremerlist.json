@@ -2,12 +2,23 @@
     "users": [
         {
             "id": 1,
-            "name": "asd",
+            "name": "테스트 1111",
+            "chid": "3ef2872698aee4e944d808f27abca3a9",
+            "onlive": true,
+            "bangonallrm": true,
+            "bangoffallrm": false,
+            "livetitle": "루리커피 버츄얼 분점",
+            "falst": true
+        },
+        {
+            "id": 2,
+            "name": "ㅁㄴㅇ",
             "chid": "bae2142e03116206963eea4bc15dc402",
             "onlive": false,
             "bangonallrm": false,
             "bangoffallrm": true,
-            "livetitle": "트릭컬 찍먹"
+            "livetitle": "제목 없음",
+            "falst": true
         }
     ]
 }
