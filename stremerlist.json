@@ -1,14 +1,12 @@
-{
-    "users": [
-        {
-            "id": 2,
-            "name": "asd",
-            "chid": "c65ca7335aaeb2ca0c985078223017c0",
-            "onlive": true,
-            "bangonallrm": true,
-            "bangoffallrm": false,
-            "livetitle": "9시 하브렐 2막 치수팟 트라이 갑니다ㄷㄷㄷㄷ",
-            "falst": true
-        }
-    ]
-}
+[
+    {
+        "id": 1,
+        "name": "asd",
+        "chid": "42597020c1a79fb151bd9b9beaa9779b",
+        "onlive": true,
+        "bangonallrm": true,
+        "bangoffallrm": false,
+        "livetitle": "노데스 탑라이너",
+        "falst": true
+    }
+]

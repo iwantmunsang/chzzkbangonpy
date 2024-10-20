@@ -3,6 +3,8 @@ import json
 import os
 import random
 from tkinter import messagebox
+import pandas as pd
+from tkinter import filedialog
 
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
@@ -179,6 +181,29 @@ def bangoff_message_btn():
         messagebox.showinfo("방종시 메시지 설정", f"방종시 메시지가 : {bangoff_message}로 설정 되었습니다")
     except Exception as e:
         messagebox.showerror("에러 발생", f"오류가 발생 하였습니다\n{e}")
+
+def bunhaun_button_function():
+    try:
+        tk.file = filedialog.askopenfile(
+            title="불러올 stremerlist.json 파일을 선택하세요",
+            filetypes=(('JSON 파일', '*.json'),)
+        )
+        if tk.file:
+            global json_file_path
+            print(tk.file.name)
+            
+            # 파일을 열 때 인코딩을 명시적으로 utf-8로 지정
+            with open(tk.file.name, 'r', encoding='utf-8') as file:
+                data = json.load(file)  # 파일 내용을 JSON으로 불러옴
+            
+            user = data['users']
+            print(user)
+            write_json(json_file_path, user)
+    except UnicodeDecodeError as e:
+        messagebox.showerror("인코딩 오류", f"파일을 읽는 중 인코딩 오류가 발생했습니다: {e}")
+    except Exception as e:
+        print(e)
+
     
 
 
@@ -228,6 +253,9 @@ frame_bangoff_message.pack(pady=5)
 frame_bangon_message = Frame(tk)
 frame_bangon_message.pack(pady=5)
 
+frame_3 = Frame(tk)
+frame_3.pack(pady=5)
+
 
 bangoff_message_label = Label(frame_bangoff_message ,text="방종시 메시지" , font=("굴림",12))
 bangoff_message_label.grid(row=0, column=0, padx=5)
@@ -254,8 +282,11 @@ bangon_message_button.grid(row=0, column=2, padx=5)
 bangon_message_deflat_load_button = Button(frame_bangon_message , text="기본값 로드" , command=bangon_message_btn_deflat_load)
 bangon_message_deflat_load_button.grid(row=0, column=3, padx=5)
 
-bangoff_set_button = Button(tk ,text=f"방종 알람 현제 상태 : {bangoff_set}",font=("굴림",12), command=bangoff_set_button_command)
-bangoff_set_button.pack()
+bangoff_set_button = Button(frame_3 ,text=f"방종 알람 현제 상태 : {bangoff_set}",font=("굴림",12), command=bangoff_set_button_command)
+bangoff_set_button.grid(row=0, column=3, padx=5)
+
+bunhaun_button = Button(frame_3 , text="이전 버전 리스트 불러오기" , command=bunhaun_button_function)
+bunhaun_button.grid(row=0 , column=4, padx=5)
 
 refresh_streamer_list()
 
