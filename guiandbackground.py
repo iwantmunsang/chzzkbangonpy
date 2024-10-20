@@ -145,7 +145,12 @@ def update_labels():
                 # 새로운 프레임과 라벨 생성
                 frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
                 frame.pack(padx=10, pady=5, fill="x")
-                label = Label(frame, text=f"{user['name']} | 제목 : {user['livetitle']}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
+                #36글자 넘으면 자르기
+                title = f"{user['name']} | 제목 : {user['livetitle']}"
+                if len(title) >= 36:
+                    title = title[0:36]
+                    title = f"{title}..."
+                label = Label(frame, text=f"{title}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
                 label.pack()
                 label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
                 labell.append(user['id'])  # 라벨에 이름 추가
@@ -187,25 +192,29 @@ def start_program_function():
     
     # start_program이 False일 때만 실행
     if not start_program:
-        abc = os.getcwd()  # 현재 작업 디렉토리 가져오기
-        wichi = os.path.join(abc, "치지직뱅온알람기.lnk")  # 경로 설정 (os.path.join 사용)
-        
-        # 복사할 대상 경로 설정
-        target_path = r"C:\Users\USER\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\치지직뱅온알람기.lnk"
-        
-        # 파일 복사
-        if os.path.exists(wichi):
-            try:
-                shutil.copyfile(wichi, target_path)  # 원본 파일과 대상 파일 경로 제공
-                print("파일이 성공적으로 복사되었습니다.")
-                
-                # JSON 설정 업데이트
-                data["setting"]["start_program"] = True
-                write_json(setting_json, data)  # 설정 업데이트
-            except Exception as e:
-                print(f"파일 복사 중 오류 발생: {e}")
+        if messagebox.askyesno("시작 프로그램으로 등록 할까요?" , "컴퓨터가 실행 되면 같이 실행 할까요?"):
+            abc = os.getcwd()  # 현재 작업 디렉토리 가져오기
+            wichi = os.path.join(abc, "치지직뱅온알람기.lnk")  # 경로 설정 (os.path.join 사용)
+            
+            # 복사할 대상 경로 설정
+            target_path = r"C:\Users\USER\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\치지직뱅온알람기.lnk"
+            
+            # 파일 복사
+            if os.path.exists(wichi):
+                try:
+                    shutil.copyfile(wichi, target_path)  # 원본 파일과 대상 파일 경로 제공
+                    print("파일이 성공적으로 복사되었습니다.")
+                    
+                    # JSON 설정 업데이트
+                    data["setting"]["start_program"] = True
+                    write_json(setting_json, data)  # 설정 업데이트
+                except Exception as e:
+                    print(f"파일 복사 중 오류 발생: {e}")
+            else:
+                print("원본 파일을 찾을 수 없습니다.")
         else:
-            print("원본 파일을 찾을 수 없습니다.")
+            data["setting"]["start_program"] = True
+            write_json(setting_json, data)
     else:
         print("이미 파일이 존재합니다.")
 
