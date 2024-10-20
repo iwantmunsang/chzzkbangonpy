@@ -39,7 +39,7 @@ def add_streamer():
     data = read_json(json_file_path)
     if "users" not in data:
         data["users"] = []
-    data["users"].append({"id": len(data["users"]) + 1, "name": name, "chid": id, "onlive": False, "bangonallrm": False, "bangoffallrm": False, "livetitle": "제목 없음", "falst":True})
+    data["users"].append({"id": len(data["users"]) + 1, "name": name, "chid": id, "onlive": False, "bangonallrm": False, "bangoffallrm": False, "livetitle": "제목 없음"})
     write_json(json_file_path, data)
     id_entry.delete(0, END)
     name_entry.delete(0, END)
