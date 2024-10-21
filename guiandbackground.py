@@ -7,10 +7,14 @@ import webbrowser
 from plyer import notification
 import subprocess
 from tkinter import messagebox
-import winshell
 import shutil
+import secrets
+import uuid
+import imge
 
 falstbagoffallrm = False
+
+
 
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
@@ -44,8 +48,8 @@ def api_get():
                 'Accept-Encoding': 'gzip, deflate, br',
                 'Connection': 'keep-alive',
                 'Referer': 'https://www.google.com/',
-                'Upgrade-Insecure-Requests': '1','path':"/polling/v1/channels/9e731707f6524b88436c5b3ede3a9848/live-status"
-                ,"cookie":"NID_AUT=I3hV+sO6WBTAnaYbF5rjrKxn2O6ExaHcJa4JEHixnQhKguylPfm64WxChHAkKjOZ; NID_JKL=Rhe4poTMgkwrCO3JuEdoukH9eWZf+tVxfmeZvKY93ZA=; NAC=rAu8BQAyG8dZ; NNB=YKSZCL2TLLFWM; BUC=FUnBiNBqw8djUudesjxuJh5_8mG1C-SDq0zNiSLaIfc=; NID_SES=AAABmhb3rc93wNbtsLPBCgcjow6Y45/i60kNcCdaV3H1Q1aou6mVmqYVcVuVqLC9ozoUTGMo0KYEXZAJ3j97+73rjMBTlblPgEpS4Ku+EIuOCI3nlBAg4UNr3amDWsoLhlw43bCr41FYo5MIeYJwDggfC5VJEaXksobgIcvs00t2LlKbKySTB2H+/sJGw4edCzoe6iRePE9roBqydNjhrwoPTjo//Px6prfpGRmpbpwPyUJMvmYidhlpIboOQi0g2Mtns4JWhyAcKcn0E+HjuFeRCBmfkEByynxx7wKDOPf4qUweE9Kk/TqGckTfbjkAylxeKDB6J8vY3Jx1/pGplh3FD/Mbs3NRTIWkW8e3MWaR6o7weDlguVU7+23px9E0BowBLTJa7H6SPScc2RTG5UXCH7QPrjZBtwjEZJ5RYj/CxxB+SLbt/OYVEaE2NU7nuUClFqXdE2AZ9DuahGbQZ/PMiBxOZeu3H1FVv3BWcD2Wozl5Gp59OjkK60aRonpWMMxwr3ilUgXVAqo29nFqqL371VFxuZMviVmGO6QGlpu+aMh3; ba.uuid=0"
+                'Upgrade-Insecure-Requests': '1',
+                'Cookie': "NID_AUT=I3hV+sO6WBTAnaYbF5rjrKxn2O6ExaHcJa4JEHixnQhKguylPfm64WxChHAkKjOZ; NID_JKL=Rhe4poTMgkwrCO3JuEdoukH9eWZf+tVxfmeZvKY93ZA=; NAC=rAu8BQAyG8dZ; NNB=YKSZCL2TLLFWM; BUC=FUnBiNBqw8djUudesjxuJh5_8mG1C-SDq0zNiSLaIfc=; NID_SES=AAABmhb3rc93wNbtsLPBCgcjow6Y45/i60kNcCdaV3H1Q1aou6mVmqYVcVuVqLC9ozoUTGMo0KYEXZAJ3j97+73rjMBTlblPgEpS4Ku+EIuOCI3nlBAg4UNr3amDWsoLhlw43bCr41FYo5MIeYJwDggfC5VJEaXksobgIcvs00t2LlKbKySTB2H+/sJGw4edCzoe6iRePE9roBqydNjhrwoPTjo//Px6prfpGRmpbpwPyUJMvmYidhlpIboOQi0g2Mtns4JWhyAcKcn0E+HjuFeRCBmfkEByynxx7wKDOPf4qUweE9Kk/TqGckTfbjkAylxeKDB6J8vY3Jx1/pGplh3FD/Mbs3NRTIWkW8e3MWaR6o7weDlguVU7+23px9E0BowBLTJa7H6SPScc2RTG5UXCH7QPrjZBtwjEZJ5RYj/CxxB+SLbt/OYVEaE2NU7nuUClFqXdE2AZ9DuahGbQZ/PMiBxOZeu3H1FVv3BWcD2Wozl5Gp59OjkK60aRonpWMMxwr3ilUgXVAqo29nFqqL371VFxuZMviVmGO6QGlpu+aMh3; ba.uuid=0"  # 쿠키 사용
             }
             response = requests.get(url, headers=headers)
             # 응답을 JSON 형태로 변환
@@ -53,11 +57,21 @@ def api_get():
             # content 안에 있는 openlive 값 추출
             openlive = api_data.get('content', {}).get('openLive')
             name = api_data.get('content', {}).get('channelName')
+            channelImageUrl = api_data.get('content',{}).get('channelImageUrl')
             print(f"Open Live: {openlive}")
-            # JSON 데이터에 onlive 값 반영
+            print(f"channelImageUrl : {channelImageUrl}")
             user['onlive'] = openlive
-            # if not user['falst']:
-            #     user['falst'] = False
+            user['channelImageUrl'] = channelImageUrl
+            last_part = channelImageUrl.split('/')[-2]
+            channelImageUrlname = last_part
+            user['channelImagename'] = channelImageUrlname
+
+            ############################################ 이미지 다운
+            if not user['channelImagdownload']:
+                print(channelImageUrlname)
+                imge.imge(channelImageUrl, channelImageUrlname , "images")
+                user['channelImagdownload'] = True
+            ############################################################################################################################################
             if openlive:
                 url2 = f"https://api.chzzk.naver.com/polling/v1/channels/{chids}/live-status"
                 response = requests.get(url2, headers=headers)
@@ -105,7 +119,7 @@ def api_get():
         # JSON 파일에 업데이트된 데이터 쓰기
         write_json(json_file_path, data)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error api_get: {e}")
 
 # 이름으로 URL 열기 함수
 def open_link(name):
@@ -117,8 +131,6 @@ def open_link(name):
 
 labell = []
 
-# 라벨 업데이트 함수
-# 라벨 업데이트 함수
 # 프레임을 저장할 딕셔너리
 frames = {}
 
@@ -145,18 +157,16 @@ def update_labels():
                 # 새로운 프레임과 라벨 생성
                 frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
                 frame.pack(padx=10, pady=5, fill="x")
-                #36글자 넘으면 자르기
+                # 36글자 넘으면 자르기
                 title = f"{user['name']} | 제목 : {user['livetitle']}"
                 if len(title) >= 36:
-                    title = title[0:36]
-                    title = f"{title}..."
+                    title = title[0:36] + "..."
                 label = Label(frame, text=f"{title}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
                 label.pack()
                 label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
                 labell.append(user['id'])  # 라벨에 이름 추가
                 frames[user['id']] = frame  # 프레임을 딕셔너리에 저장
                 falstbagoffallrm = True
-                # onlive가 False인 경우 프레임 삭제
         elif user['id'] in labell:
             # 해당 프레임 제거
             frame = frames.pop(user['id'], None)
@@ -164,12 +174,8 @@ def update_labels():
                 frame.destroy()  # 프레임 삭제
                 labell.remove(user['id'])  # 라벨에서 ID 제거
 
-
     print(f"{labell} 라벨 라벨")
     tk.after(60000, update_labels)  # 1분마다 업데이트
-
-
-
 
 def reload_button():
     try:
@@ -185,14 +191,13 @@ def setting():
     print("설정")
     subprocess.Popen(['app.exe'], shell=True)
 
-
 def start_program_function():
     data = read_json(setting_json)
     start_program = data["setting"]["start_program"]
     
     # start_program이 False일 때만 실행
     if not start_program:
-        if messagebox.askyesno("시작 프로그램으로 등록 할까요?" , "컴퓨터가 실행 되면 같이 실행 할까요?"):
+        if messagebox.askyesno("시작 프로그램으로 등록 할까요?", "컴퓨터가 실행 되면 같이 실행 할까요?"):
             abc = os.getcwd()  # 현재 작업 디렉토리 가져오기
             wichi = os.path.join(abc, "치지직뱅온알람기.lnk")  # 경로 설정 (os.path.join 사용)
             
@@ -221,7 +226,6 @@ def start_program_function():
 
 start_program_function()
 
-
 # JSON 데이터 읽기
 data = read_json(json_file_path)
 
@@ -241,11 +245,8 @@ settings_button = Button(tk, text="설정", font=("굴림", 12), command=setting
 settings_button.pack(pady=10)
 
 # 스트리밍 상태 로드 버튼 추가 (오른쪽 아래 배치)
-api_get_reload = Button(tk, text="스트리밍 상태 리로드", font=("굴림", 12),bg="yellow", command=reload_button)
+api_get_reload = Button(tk, text="스트리밍 상태 리로드", font=("굴림", 12), bg="yellow", command=reload_button)
 api_get_reload.place(relx=1, rely=1, anchor="se")
-
-
-
 
 # 초기 업데이트 및 주기적 업데이트 설정
 api_get()

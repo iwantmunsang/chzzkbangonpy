@@ -5,6 +5,8 @@ import random
 from tkinter import messagebox
 import pandas as pd
 from tkinter import filedialog
+import sys
+import webbrowser
 
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
@@ -27,6 +29,15 @@ def write_json(file_path, data):
 def add_streamer():
     id = id_entry.get()
     name = name_entry.get()
+    global isteregg
+    if isteregg:
+        if name == "rickroll" or id == "rickroll" or name == "RICKROLL" or id == "RICKROLL" or name == "릭롤" or id == "릭롤":
+            webbrowser.open_new_tab("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            return
+        if name == "케인인님" or name == "케인인" or name == "케인":
+            webbrowser.open_new_tab("https://www.youtube.com/watch?v=92volEdYcCQ")
+            messagebox.showinfo("무빙맨","얘는! 유튜브 쟁이들은 이런거 몰라! 너무 내수용은 밴이야 밴!! ㅇㅇㄱㄴ1")
+
     if not id or not name:
         messagebox.showerror("입력 오류", "모든 필드를 입력하세요!")
         return
@@ -39,7 +50,16 @@ def add_streamer():
     data = read_json(json_file_path)
     if "users" not in data:
         data["users"] = []
-    data["users"].append({"id": len(data["users"]) + 1, "name": name, "chid": id, "onlive": False, "bangonallrm": False, "bangoffallrm": False, "livetitle": "제목 없음"})
+    data["users"].append({"id": len(data["users"]) + 1,
+                           "name": name,
+                            "chid": id,
+                            "onlive": False,
+                            "bangonallrm": False,
+                            "bangoffallrm": False,
+                            "livetitle": "제목 없음",
+                            "channelImageUrl":None,
+                            "channelImagdownload":False,
+                            "channelImagename":None})
     write_json(json_file_path, data)
     id_entry.delete(0, END)
     name_entry.delete(0, END)
@@ -70,17 +90,6 @@ def delete_streamer():
 # 스트리머 목록 초기화 함수
 def reset_streamer_list():
     if messagebox.askyesno("초기화 확인", "정말로 초기화 하시겠습니까? 초기화가 진행되면 복구가 불가합니다."):
-        monjang = [
-            "망겜이야 어쩌라고 나가",
-            "너이 게이씨 뒷부분은 금지야 금지!",
-            "계약서 깟다구!!",
-            "한탕탕이님 한판 해요",
-            "지리야 가서 코코아좀 타와라",
-            "뿌웅 뭉탱이 월드에 오신걸 환영 합니다",
-            "안녕하세요 저는 트위치에서 방송을 하고 있는 스트리머 케인입니다",
-            "지금부터는"
-        ]
-        random_monjang = random.choice(monjang)
         if messagebox.askyesno("찐막 확인", f"스트리머 목록을 정말 삭제 하시겠습니까?"):
             data = {"users": []}
             write_json(json_file_path, data)
@@ -184,25 +193,88 @@ def bangoff_message_btn():
 
 def bunhaun_button_function():
     try:
-        tk.file = filedialog.askopenfile(
+        # 파일 선택 대화상자를 열고, 선택한 파일을 얻음
+        file = filedialog.askopenfile(
             title="불러올 stremerlist.json 파일을 선택하세요",
             filetypes=(('JSON 파일', '*.json'),)
         )
-        if tk.file:
+        
+        # 파일을 제대로 선택했는지 확인
+        if file:
             global json_file_path
-            print(tk.file.name)
+            print(file.name)
             
-            # 파일을 열 때 인코딩을 명시적으로 utf-8로 지정
-            with open(tk.file.name, 'r', encoding='utf-8') as file:
-                data = json.load(file)  # 파일 내용을 JSON으로 불러옴
+            # 선택한 파일을 열 때 인코딩을 명시적으로 utf-8로 지정
+            with open(file.name, 'r', encoding='utf-8') as f:
+                data = json.load(f)  # 파일 내용을 JSON으로 불러옴
             
-            user = data['users']
-            print(user)
-            write_json(json_file_path, user)
+            # JSON 데이터에 새로운 필드 추가
+            for user in data.get('users', []):
+                # 사용자 객체에 새로운 키 추가하기
+                user.update({
+                    "channelImageUrl": None,
+                    "channelImagdownload": False,
+                    "channelImagename": None
+                })
+            
+            # 수정된 데이터를 원래의 json_file_path에 저장
+            write_json(json_file_path, data)
+            
+            messagebox.showinfo("성공", "기존 데이터를 업데이트하였습니다.")
+    
     except UnicodeDecodeError as e:
         messagebox.showerror("인코딩 오류", f"파일을 읽는 중 인코딩 오류가 발생했습니다: {e}")
+    except json.JSONDecodeError as e:
+        messagebox.showerror("JSON 오류", f"JSON 파일을 읽는 중 오류가 발생했습니다: {e}")
     except Exception as e:
-        print(e)
+        messagebox.showerror("에러 발생", f"예기치 않은 오류가 발생했습니다: {e}")
+
+def all_reset_button_function():
+    # 첫 번째 확인 창
+    if messagebox.askyesno("리셋 진행", "이 설정은 스트리머 리스트와 설정값 등을 기본 값으로 초기화 합니다.\n진행 하시겠습니까?"):
+        # 두 번째 확인 창
+        if messagebox.askyesno("리셋 진행", "여기서 예를 클릭하면 진짜로 리셋이 진행됩니다."):
+
+            # 설정 파일을 초기화
+            setting_json = {
+                "setting": {
+                    "bangoff": True,
+                    "start_program": False
+                },
+                "message": {
+                    "bangon_message": "default",
+                    "bangoff_message": "default"
+                }
+            }
+            write_json(setting_file, setting_json)
+
+            # 스트리머 리스트 파일을 초기화
+            streamerlist = {
+                "users": []
+            }
+            write_json(json_file_path, streamerlist)
+
+            # 'images' 폴더 삭제
+            images_dir = "images"
+            if os.path.exists(images_dir):
+                for root, dirs, files in os.walk(images_dir, topdown=False):
+                    for name in files:
+                        os.remove(os.path.join(root, name))  # 파일 삭제
+                    for name in dirs:
+                        os.rmdir(os.path.join(root, name))  # 빈 디렉토리 삭제
+                os.rmdir(images_dir)  # 최상위 디렉토리 삭제
+
+            # 리셋 완료 메시지 박스
+            messagebox.showinfo("리셋 완료", "리셋이 완벽히 진행 되었습니다. 프로그램을 재시작 합니다.")
+            sys.exit()  # 프로그램 종료
+isteregg = False
+def isteregg_onoff_button_function():
+    if messagebox.askyesno("🥚is터egg🥚 호ㅏㄹ sungㅎㅏㅗ" , "🥚이🥚s🥚ㅌㅓ🥚달🥚걀🥚을 활성화 할까요????????"):
+        global isteregg
+        isteregg = True
+        messagebox.showinfo("🥚is터egg🥚 호ㅏㄹ sungㅎㅏㅗ","1000000000ㅂㅜㄴ으ㅣ 1ㅇㅢ 확ㅇㅠㄹ을 뚜ㅀ어ㅆ으니 ㅌㅡㄱ벼ㄹ히 허ㄹㅏㄱ해주ㅁ \nㅅㅡㅌㅡㄹㅣ머 ㅊㅜga 카ㄴㅇㅔ rickrollㅇㅣㅂ려ㄱㅎㅐ보셈")
+
+
 
     
 
@@ -256,6 +328,9 @@ frame_bangon_message.pack(pady=5)
 frame_3 = Frame(tk)
 frame_3.pack(pady=5)
 
+frame_4 = Frame(tk)
+frame_4.pack(pady=5)
+
 
 bangoff_message_label = Label(frame_bangoff_message ,text="방종시 메시지" , font=("굴림",12))
 bangoff_message_label.grid(row=0, column=0, padx=5)
@@ -287,6 +362,16 @@ bangoff_set_button.grid(row=0, column=3, padx=5)
 
 bunhaun_button = Button(frame_3 , text="이전 버전 리스트 불러오기" , command=bunhaun_button_function)
 bunhaun_button.grid(row=0 , column=4, padx=5)
+
+all_reset_button = Button(frame_4 , text="모든 설정 리셋" , command=all_reset_button_function , bg="red")
+all_reset_button.grid(row=0 , column=1, padx=5)
+
+isteregg_button = random.randrange(1 , 1000000000)
+if isteregg_button == 123445:
+    isteregg_onoff_button = Button(frame_4 , text="🥚이스터에그🥚" , command=isteregg_onoff_button_function)
+    isteregg_onoff_button.grid(row=0 , column=2, padx=5)
+else:
+    print(isteregg_button)
 
 refresh_streamer_list()
 

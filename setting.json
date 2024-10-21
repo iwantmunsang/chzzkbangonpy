@@ -4,7 +4,7 @@
         "start_program": true
     },
     "message": {
-        "bangon_message": "defalt",
-        "bangoff_message": "defalt"
+        "bangon_message": "default",
+        "bangoff_message": "default"
     }
 }

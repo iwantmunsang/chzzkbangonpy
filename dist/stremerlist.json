@@ -1,4 +1,13 @@
 {
     "users": [
+        {
+            "id": 1,
+            "name": "asd",
+            "chid": "42597020c1a79fb151bd9b9beaa9779b",
+            "onlive": true,
+            "bangonallrm": true,
+            "bangoffallrm": false,
+            "livetitle": "안녕하세요"
+        }
     ]
 }

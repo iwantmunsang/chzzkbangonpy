@@ -1,7 +1,7 @@
 {
     "setting": {
-        "bangoff": true
-        ,"start_program": false
+        "bangoff": true,
+        "start_program": true
     },
     "message": {
         "bangon_message": "defalt",
