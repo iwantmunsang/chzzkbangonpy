@@ -8,13 +8,18 @@ from plyer import notification
 import subprocess
 from tkinter import messagebox
 import shutil
-import secrets
-import uuid
 import imge
 from PIL import Image, ImageTk
+import sys
 
 falstbagoffallrm = False
 
+
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 
 # JSON 파일 경로
@@ -226,7 +231,7 @@ def reload_button():
 # 설정 버튼 함수
 def setting():
     print("설정")
-    subprocess.Popen(['app.exe'], shell=True)
+    subprocess.run(['python','App.py'])
 
 def start_program_function():
     data = read_json(setting_json)

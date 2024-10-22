@@ -1,10 +1,11 @@
 {
     "setting": {
         "bangoff": true,
-        "start_program": true
+        "start_program": true,
+        "showimage": true
     },
     "message": {
-        "bangon_message": "defalt",
-        "bangoff_message": "defalt"
+        "bangon_message": "default",
+        "bangoff_message": "default"
     }
 }
