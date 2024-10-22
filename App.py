@@ -240,6 +240,7 @@ def all_reset_button_function():
                 "setting": {
                     "bangoff": True,
                     "start_program": False
+                    ,"showimage" : True
                 },
                 "message": {
                     "bangon_message": "default",
@@ -274,6 +275,18 @@ def isteregg_onoff_button_function():
         isteregg = True
         messagebox.showinfo("🥚is터egg🥚 호ㅏㄹ sungㅎㅏㅗ","1000000000ㅂㅜㄴ으ㅣ 1ㅇㅢ 확ㅇㅠㄹ을 뚜ㅀ어ㅆ으니 ㅌㅡㄱ벼ㄹ히 허ㄹㅏㄱ해주ㅁ \nㅅㅡㅌㅡㄹㅣ머 ㅊㅜga 카ㄴㅇㅔ rickrollㅇㅣㅂ려ㄱㅎㅐ보셈")
 
+show_imgae_value = True
+def show_imgae_function():
+    global show_imgae_value
+    show_imgae_value = not show_imgae_value
+    show_image.config(text=f"이미지 표시 | 현제 상태 : {show_imgae_value}")
+
+    data = read_json(setting_file)
+    if "setting" not in data:
+        data["setting"] = {}
+    data["setting"]["showimage"] = show_imgae_value
+    write_json(setting_file, data)
+    print(f"이미지 표시 값 : {show_imgae_value} , {data["setting"]["showimage"]}")
 
 
     
@@ -362,6 +375,9 @@ bangoff_set_button.grid(row=0, column=3, padx=5)
 
 bunhaun_button = Button(frame_3 , text="이전 버전 리스트 불러오기" , command=bunhaun_button_function)
 bunhaun_button.grid(row=0 , column=4, padx=5)
+
+show_image = Button(frame_3 , text=f"이미지 표시 | 현제 상태 : {show_imgae_value}" , command=show_imgae_function)
+show_image.grid(row=0 , column=5, padx=5)
 
 all_reset_button = Button(frame_4 , text="모든 설정 리셋" , command=all_reset_button_function , bg="red")
 all_reset_button.grid(row=0 , column=1, padx=5)

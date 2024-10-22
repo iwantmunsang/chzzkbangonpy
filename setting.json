@@ -1,7 +1,8 @@
 {
     "setting": {
         "bangoff": true,
-        "start_program": true
+        "start_program": true,
+        "showimage": true
     },
     "message": {
         "bangon_message": "default",

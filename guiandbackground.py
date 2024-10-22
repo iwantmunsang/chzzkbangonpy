@@ -11,6 +11,7 @@ import shutil
 import secrets
 import uuid
 import imge
+from PIL import Image, ImageTk
 
 falstbagoffallrm = False
 
@@ -38,6 +39,7 @@ def api_get():
     try:
         data = read_json(json_file_path)
         setting = read_json(setting_json)
+        global channelImageUrlname
         for user in data["users"]:
             chids = user["chid"]
             url = f'https://api.chzzk.naver.com/service/v1/channels/{chids}'
@@ -64,7 +66,12 @@ def api_get():
             user['channelImageUrl'] = channelImageUrl
             last_part = channelImageUrl.split('/')[-2]
             channelImageUrlname = last_part
-            user['channelImagename'] = channelImageUrlname
+            if not user['channelImagdownload']:
+                user['channelImagename'] = channelImageUrlname
+            elif user['channelImagdownload'] and not user['channelImagename'] == channelImageUrlname:
+                print(channelImageUrlname)
+                imge.imge(channelImageUrl, channelImageUrlname , "images")
+                user['channelImagdownload'] = True
 
             ############################################ 이미지 다운
             if not user['channelImagdownload']:
@@ -157,12 +164,41 @@ def update_labels():
                 # 새로운 프레임과 라벨 생성
                 frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
                 frame.pack(padx=10, pady=5, fill="x")
+
                 # 36글자 넘으면 자르기
                 title = f"{user['name']} | 제목 : {user['livetitle']}"
                 if len(title) >= 36:
-                    title = title[0:36] + "..."
+                    setting = read_json(setting_json)
+                    if setting["setting"]["showimage"]:
+                        title = title[0:31] + "..."
+                    else:
+                        title = title[0:36] + "..."
+
+                # 텍스트 라벨 생성
                 label = Label(frame, text=f"{title}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
-                label.pack()
+
+                # 이미지 처리
+                try:
+                    if setting["setting"]["showimage"]:
+                        if os.path.exists(f"images/{channelImageUrlname}"):
+                            image = Image.open(f"images/{channelImageUrlname}")  # 이미지 경로를 실제 파일 경로로 바꾸세요.
+                        else:
+                            image = Image.open(f"images/ERROR.png")
+                            user["channelImagdownload"] = False
+                            write_json(json_file_path , data)
+                            api_get_reload
+
+                        image = image.resize((50, 50))  # 이미지 크기 조절 (선택 사항)
+                        photo = ImageTk.PhotoImage(image)
+
+                        # Label에 이미지 설정
+                        image_label = Label(frame, image=photo, bg="white")
+                        image_label.image = photo  # 이미지가 가비지 컬렉션 되지 않도록 참조 유지
+                        image_label.pack(side="left")
+                except Exception as e:
+                    print(f"이미지 로드 오류: {e}")
+                label.pack(side="left", padx=10)
+
                 label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
                 labell.append(user['id'])  # 라벨에 이름 추가
                 frames[user['id']] = frame  # 프레임을 딕셔너리에 저장
@@ -176,6 +212,7 @@ def update_labels():
 
     print(f"{labell} 라벨 라벨")
     tk.after(60000, update_labels)  # 1분마다 업데이트
+
 
 def reload_button():
     try:
