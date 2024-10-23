@@ -7,10 +7,16 @@ import pandas as pd
 from tkinter import filedialog
 import sys
 import webbrowser
-
+import datetime
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
 setting_file = 'setting.json'
+
+def printt(message:str):
+    print(f"INFO | [{datetime.datetime.today().strftime("%Y/%m/%d %H:%M:%S")}]  :  {message}")
+
+def printterror(message:str):
+    printt(f"ERROR | \n\n\n 오류가 발생 하였지만 프로그램을 종류하지 않고 계속 실행합니다. \n {message}\n\n\n")
 
 # JSON 파일 읽기 함수
 def read_json(file_path):
@@ -27,43 +33,59 @@ def write_json(file_path, data):
 
 # 스트리머 추가 함수
 def add_streamer():
-    id = id_entry.get()
-    name = name_entry.get()
-    global isteregg
-    if isteregg:
-        if name == "rickroll" or id == "rickroll" or name == "RICKROLL" or id == "RICKROLL" or name == "릭롤" or id == "릭롤":
-            webbrowser.open_new_tab("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-            return
-        if name == "케인인님" or name == "케인인" or name == "케인":
-            webbrowser.open_new_tab("https://www.youtube.com/watch?v=92volEdYcCQ")
-            messagebox.showinfo("무빙맨","얘는! 유튜브 쟁이들은 이런거 몰라! 너무 내수용은 밴이야 밴!! ㅇㅇㄱㄴ1")
+    try:
+        id = id_entry.get()
+        name = name_entry.get()
+        global isteregg
+        printt(f"add_streamer  스트리머 추가 시도: ID={id}, Name={name}")
 
-    if not id or not name:
-        messagebox.showerror("입력 오류", "모든 필드를 입력하세요!")
-        return
-    #https://chzzk.naver.com/bae2142e03116206963eea4bc15dc402
-    if "chzzk.naver.com" in id:
-        last_part = id.split('/')[-1]
-        id = last_part
-        print(id)
-    print(id)
-    data = read_json(json_file_path)
-    if "users" not in data:
-        data["users"] = []
-    data["users"].append({"id": len(data["users"]) + 1,
-                           "name": name,
-                            "chid": id,
-                            "onlive": False,
-                            "bangonallrm": False,
-                            "bangoffallrm": False,
-                            "livetitle": "제목 없음",
-                            "channelImageUrl":None,
-                            "channelImagdownload":False,
-                            "channelImagename":None})
-    write_json(json_file_path, data)
-    id_entry.delete(0, END)
-    name_entry.delete(0, END)
-    refresh_streamer_list()
+        if isteregg:
+            if name.lower() == "rickroll" or id.lower() == "rickroll" or name == "릭롤" or id == "릭롤":
+                webbrowser.open_new_tab("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                printt(f"add_streamer  Easter Egg 발동: Rickroll - {id}, {name}")
+                return
+            if name == "케인인님" or name == "케인인" or name == "케인":
+                webbrowser.open_new_tab("https://www.youtube.com/watch?v=92volEdYcCQ")
+                messagebox.showinfo("무빙맨","얘는! 유튜브 쟁이들은 이런거 몰라! 너무 내수용은 밴이야 밴!! ㅇㅇㄱㄴ1")
+                printt("add_streamer  케인인님 Easter Egg 발동")
+        
+        if not id or not name:
+            messagebox.showerror("입력 오류", "모든 필드를 입력하세요!")
+            printterror("add_streamer  스트리머 추가 실패: ID 또는 이름이 입력되지 않음")
+            return
+
+        if "/" in id:
+            last_part = id.split('/')[-1]
+            id = last_part
+            printt(f"add_streamer  네이버 ID에서 마지막 부분 추출: {id}")
+        
+        data = read_json(json_file_path)
+        if "users" not in data:
+            data["users"] = []
+
+        data["users"].append({
+            "id": len(data["users"]) + 1,
+            "name": name,
+            "chid": id,
+            "onlive": False,
+            "bangonallrm": False,
+            "bangoffallrm": False,
+            "livetitle": "제목 없음",
+            "channelImageUrl": None,
+            "channelImagdownload": False,
+            "channelImagename": None
+        })
+
+        write_json(json_file_path, data)
+        printt(f"add_streamer  스트리머 추가 성공: ID={id}, Name={name}")
+        
+        id_entry.delete(0, END)
+        name_entry.delete(0, END)
+        refresh_streamer_list()
+
+    except Exception as e:
+        printterror(f"스트리머 추가 중 오류 발생: \n{str(e)}")
+        messagebox.showerror("에러 발생", f"오류가 발생했습니다: {e}")
 
 # 스트리머 목록 갱신 함수
 def refresh_streamer_list():
@@ -75,37 +97,56 @@ def refresh_streamer_list():
 
 # 스트리머 삭제 함수
 def delete_streamer():
-    selected = listbox.curselection()
-    if not selected:
-        messagebox.showerror("선택 오류", "삭제할 스트리머를 선택하세요!")
-        return
-    data = read_json(json_file_path)
-    selected_index = selected[0]
-    user_id = data["users"][selected_index]["id"]
-    data["users"] = [user for user in data["users"] if user["id"] != user_id]
-    write_json(json_file_path, data)
-    messagebox.showinfo("성공", "스트리머가 삭제되었습니다.")
-    refresh_streamer_list()
+    try:
+        selected = listbox.curselection()
+        if not selected:
+            messagebox.showerror("선택 오류", "삭제할 스트리머를 선택하세요!")
+            printterror("delete_streamer  스트리머 삭제 실패: 선택되지 않음")
+            return
+
+        data = read_json(json_file_path)
+        selected_index = selected[0]
+        user_id = data["users"][selected_index]["id"]
+        printt(f"delete_streamer  스트리머 삭제 시도: ID={user_id}")
+
+        data["users"] = [user for user in data["users"] if user["id"] != user_id]
+        write_json(json_file_path, data)
+
+        messagebox.showinfo("성공", "스트리머가 삭제되었습니다.")
+        printt(f"delete_streamer  스트리머 삭제 성공: ID={user_id}")
+        refresh_streamer_list()
+
+    except Exception as e:
+        printterror(f"스트리머 삭제 중 오류 발생: \n{str(e)}")
+        messagebox.showerror("에러 발생", f"오류가 발생했습니다: {e}")
 
 # 스트리머 목록 초기화 함수
 def reset_streamer_list():
-    if messagebox.askyesno("초기화 확인", "정말로 초기화 하시겠습니까? 초기화가 진행되면 복구가 불가합니다."):
-        if messagebox.askyesno("찐막 확인", f"스트리머 목록을 정말 삭제 하시겠습니까?"):
-            data = {"users": []}
-            write_json(json_file_path, data)
-            messagebox.showinfo("성공", "스트리머 목록이 초기화 되었습니다.")
-            refresh_streamer_list()
+    try:
+        if messagebox.askyesno("초기화 확인", "정말로 초기화 하시겠습니까? 초기화가 진행되면 복구가 불가합니다."):
+            if messagebox.askyesno("찐막 확인", "스트리머 목록을 정말 삭제 하시겠습니까?"):
+                data = {"users": []}
+                write_json(json_file_path, data)
+                messagebox.showinfo("성공", "스트리머 목록이 초기화 되었습니다.")
+                printt("reset_streamer_list  스트리머 목록 초기화 성공")
+                refresh_streamer_list()
+    except Exception as e:
+        printterror(f"스트리머 목록 초기화 중 오류 발생: \n{str(e)}")
+        messagebox.showerror("에러 발생", f"오류가 발생했습니다: {e}")
 
 bangoff_set = False
 
 # 방종 알람 설정 파일 업데이트 함수
 def update_bangoff_setting():
-    data = read_json(setting_file)
-    if "setting" not in data:
-        data["setting"] = {}
-    data["setting"]["bangoff"] = bangoff_set
-    write_json(setting_file, data)
-    print(f"방종 알람 설정이 {bangoff_set}으로 저장되었습니다.")
+    try:
+        data = read_json(setting_file)
+        if "setting" not in data:
+            data["setting"] = {}
+        data["setting"]["bangoff"] = bangoff_set
+        write_json(setting_file, data)
+        printt(f"방종 알람 설정이 {bangoff_set}으로 저장되었습니다.")
+    except Exception as e:
+        printterror(f"방종 알람 설정 저장 중 오류 발생: {str(e)}")
 
 def bangoff_setset():
     global bangoff_set
@@ -202,7 +243,7 @@ def bunhaun_button_function():
         # 파일을 제대로 선택했는지 확인
         if file:
             global json_file_path
-            print(file.name)
+            printt(f"bunhaun_button_function  파일 선택 : {file.name}")
             
             # 선택한 파일을 열 때 인코딩을 명시적으로 utf-8로 지정
             with open(file.name, 'r', encoding='utf-8') as f:
@@ -255,19 +296,10 @@ def all_reset_button_function():
             }
             write_json(json_file_path, streamerlist)
 
-            # 'images' 폴더 삭제
-            images_dir = "images"
-            if os.path.exists(images_dir):
-                for root, dirs, files in os.walk(images_dir, topdown=False):
-                    for name in files:
-                        os.remove(os.path.join(root, name))  # 파일 삭제
-                    for name in dirs:
-                        os.rmdir(os.path.join(root, name))  # 빈 디렉토리 삭제
-                os.rmdir(images_dir)  # 최상위 디렉토리 삭제
+            
 
             # 리셋 완료 메시지 박스
             messagebox.showinfo("리셋 완료", "리셋이 완벽히 진행 되었습니다. 프로그램을 재시작 합니다.")
-            sys.exit()  # 프로그램 종료
 isteregg = False
 def isteregg_onoff_button_function():
     if messagebox.askyesno("🥚is터egg🥚 호ㅏㄹ sungㅎㅏㅗ" , "🥚이🥚s🥚ㅌㅓ🥚달🥚걀🥚을 활성화 할까요????????"):
@@ -286,7 +318,7 @@ def show_imgae_function():
         data["setting"] = {}
     data["setting"]["showimage"] = show_imgae_value
     write_json(setting_file, data)
-    print(f"이미지 표시 값 : {show_imgae_value} , {data["setting"]["showimage"]}")
+    printt(f"show_imgae_function  이미지 표시 값 : {show_imgae_value} , {data["setting"]["showimage"]}")
 
 
     
@@ -296,6 +328,8 @@ def show_imgae_function():
 tk = Tk()
 tk.geometry("600x600")
 tk.title("치지직 뱅온 알림 설정기")
+
+
 
 # 상단에 스트리머 추가하는 부분
 frame_top = Frame(tk)
@@ -386,9 +420,8 @@ isteregg_button = random.randrange(1 , 1000000000)
 if isteregg_button == 123445:
     isteregg_onoff_button = Button(frame_4 , text="🥚이스터에그🥚" , command=isteregg_onoff_button_function)
     isteregg_onoff_button.grid(row=0 , column=2, padx=5)
-else:
-    print(isteregg_button)
 
 refresh_streamer_list()
+printt("app.py 실행 성공")
 
 tk.mainloop()

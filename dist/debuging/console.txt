@@ -1,0 +1,35 @@
+Start Time: 2024/10/24 02:52:10
+End Time: 2024/10/24 02:53:11
+STDOUT: INFO | [2024/10/24 02:52:16]  :  app.py ���� ����
+INFO | [2024/10/24 02:52:21]  :  show_imgae_function  �̹��� ǥ�� �� : False , False
+INFO | [2024/10/24 02:52:29]  :  add_streamer  ��Ʈ���� �߰� �õ�: ID=https://chzzk.naver.com/968e6dbde42506f85eaf8579d9a5a6a9, Name=as
+INFO | [2024/10/24 02:52:29]  :  add_streamer  ���̹� ID���� ������ �κ� ����: 968e6dbde42506f85eaf8579d9a5a6a9
+INFO | [2024/10/24 02:52:29]  :  add_streamer  ��Ʈ���� �߰� ����: ID=968e6dbde42506f85eaf8579d9a5a6a9, Name=as
+[2024/10/24 02:52:12]  :  update_labels  ���� ��� �󺧿� �ö��ִ� ��Ʈ������ id []
+[2024/10/24 02:52:16]  :  ������ư Ŭ���� ���� �Ͽ����ϴ� app.py����
+[2024/10/24 02:52:38]  :  update_labels  ���� ��� �󺧿� �ö��ִ� ��Ʈ������ id []
+[2024/10/24 02:52:39]  :  api get  Open Live: True
+[2024/10/24 02:52:39]  :  api get  channelImageUrl : https://nng-phinf.pstatic.net/MjAyMzEyMjZfMjkz/MDAxNzAzNTYyNDI5NjI0.HOw-qkhjd55-kYZjvnBAXr_vCqrRWCvXEME53Nchdfog.91wWuM-ze03Yx4B1YD0k_ThiXbpyOeyKIH0k_y9bEHgg.PNG/KakaoTalk_20231226_124321383.png
+[2024/10/24 02:52:39]  :  api get  MDAxNzAzNTYyNDI5NjI0.HOw-qkhjd55-kYZjvnBAXr_vCqrRWCvXEME53Nchdfog.91wWuM-ze03Yx4B1YD0k_ThiXbpyOeyKIH0k_y9bEHgg.PNG�� �ٿ�ε带 �õ��մϴ�
+�ٿ�ε� �ð�: 0.32644081115722656
+�̹����� images�� ����Ǿ����ϴ�.
+[2024/10/24 02:52:39]  :  api get  ������� ��Ʈ������ ��Ʈ���� ���� : ��Ƽ�����丮 : ���� ö�� ��ġ�ϳ�?! (W.���̳��ϼ���?)
+[2024/10/24 02:52:40]  :  update_labels  ���� ��� �󺧿� �ö��ִ� ��Ʈ������ id [1]
+
+STDERR: N/A
+
+Start Time: 2024/10/24 02:55:13
+End Time: 2024/10/24 02:55:21
+STDOUT: INFO | [2024/10/24 02:55:16]  :  app.py ���� ����
+[2024/10/24 02:55:13]  :  �̹� ������ �����մϴ�.
+[2024/10/24 02:55:14]  :  update_labels  ���� ��� �󺧿� �ö��ִ� ��Ʈ������ id []
+[2024/10/24 02:55:16]  :  ������ư Ŭ���� ���� �Ͽ����ϴ� app.py����
+
+STDERR: N/A
+
+Start Time: 2024/10/24 03:01:56
+End Time: 2024/10/24 03:02:00
+STDOUT: [2024/10/24 03:01:58]  :  update_labels  ���� ��� �󺧿� �ö��ִ� ��Ʈ������ id []
+
+STDERR: N/A
+

@@ -11,9 +11,16 @@ import shutil
 import imge
 from PIL import Image, ImageTk
 import sys
+import datetime
 
 falstbagoffallrm = False
 
+
+def printt(message:str):
+    print(f"[{datetime.datetime.today().strftime("%Y/%m/%d %H:%M:%S")}]  :  {message}")
+
+def printterror(message:str):
+    printt(f"\n\n\n 오류가 발생 하였지만 프로그램을 종류하지 않고 계속 실행합니다. \n {message}\n\n\n")
 
 
 def resource_path(relative_path):
@@ -64,9 +71,11 @@ def api_get():
             # content 안에 있는 openlive 값 추출
             openlive = api_data.get('content', {}).get('openLive')
             name = api_data.get('content', {}).get('channelName')
+            url = f"https://api.chzzk.naver.com/polling/v1/channels/{chids}/live-status"
+            response = requests.get(url , headers=headers)
             channelImageUrl = api_data.get('content',{}).get('channelImageUrl')
-            print(f"Open Live: {openlive}")
-            print(f"channelImageUrl : {channelImageUrl}")
+            printt(f"api get  Open Live: {openlive}")
+            printt(f"api get  channelImageUrl : {channelImageUrl}")
             user['onlive'] = openlive
             user['channelImageUrl'] = channelImageUrl
             last_part = channelImageUrl.split('/')[-2]
@@ -74,24 +83,27 @@ def api_get():
             if not user['channelImagdownload']:
                 user['channelImagename'] = channelImageUrlname
             elif user['channelImagdownload'] and not user['channelImagename'] == channelImageUrlname:
-                print(channelImageUrlname)
+                printt(f"api get  채널 이미지 url의 변경을 감지 하였습니다 재 다운로드를 시도합니다  다운로드하는 스트리머의 channelImageUrlname : {channelImageUrlname}")
                 imge.imge(channelImageUrl, channelImageUrlname , "images")
                 user['channelImagdownload'] = True
 
             ############################################ 이미지 다운
             if not user['channelImagdownload']:
-                print(channelImageUrlname)
-                imge.imge(channelImageUrl, channelImageUrlname , "images")
-                user['channelImagdownload'] = True
+                try:
+                    printt(f"api get  {channelImageUrlname}의 다운로드를 시도합니다")
+                    imge.imge(channelImageUrl, channelImageUrlname , "images")
+                    user['channelImagdownload'] = True
+                except Exception as e:
+                    printterror(f"api get  초기 이미지 다운로드중 오류가 발생 하였습니다 {e}")
             ############################################################################################################################################
             if openlive:
                 url2 = f"https://api.chzzk.naver.com/polling/v1/channels/{chids}/live-status"
                 response = requests.get(url2, headers=headers)
                 apidata = response.json()
                 strimingname = apidata.get('content', {}).get("liveTitle")
-                print(strimingname)
+                printt(f"api get  방송중인 스트리머의 스트리밍 제목 : {strimingname}")
                 user['livetitle'] = strimingname
-                if not user["bangonallrm"] and setting['message']['bangon_message'] == "defalt":
+                if not user["bangonallrm"] and setting['message']['bangon_message'] == "default":
                     notification.notify(
                         title=f"{name}",
                         message=f"{name}님이 방송중 입니다!!\n제목 : {strimingname}",
@@ -100,7 +112,7 @@ def api_get():
                     user['bangonallrm'] = True
                     user['bangoffallrm'] = False
                     user['livetitle'] = strimingname
-                elif not setting['message']['bangon_message'] == "defalt" and not user["bangonallrm"]:
+                elif not setting['message']['bangon_message'] == "default" and not user["bangonallrm"]:
                     notification.notify(
                         title=f"{name}",
                         message=f"{setting['message']['bangon_message']}\n제목 : {strimingname}",
@@ -115,13 +127,13 @@ def api_get():
                     user['bangoffallrm'] = True
                     user['bangonallrm'] = False
                     if falstbagoffallrm:
-                        if setting_val['setting']["bangoff"] and setting['message']['bangoff_message'] == "defalt":
+                        if setting_val['setting']["bangoff"] and setting['message']['bangoff_message'] == "default":
                             notification.notify(
                                 title=f"{name}님이 방송을 종료 하였습니다",
                                 message=f"{name}님이 방송을 종료 하였습니다",
                                 timeout=10
                             )
-                        elif setting_val['setting']["bangoff"] and not setting['message']['bangoff_message'] == "defalt":
+                        elif setting_val['setting']["bangoff"] and not setting['message']['bangoff_message'] == "default":
                             notification.notify(
                                 title=f"{name}님이 방송을 종료 하였습니다",
                                 message=f"{setting['message']['bangoff_message']}",
@@ -131,14 +143,14 @@ def api_get():
         # JSON 파일에 업데이트된 데이터 쓰기
         write_json(json_file_path, data)
     except Exception as e:
-        print(f"Error api_get: {e}")
+        printterror(f"Error api_get: {e}")
 
 # 이름으로 URL 열기 함수
 def open_link(name):
     data = read_json(json_file_path)
     for user in data["users"]:
         if user["name"] == name:
-            print(user["chid"])
+            printt(f"open_link  제목을 클릭하여 링크를 엽니다 chid = {user["chid"]}")
             webbrowser.open(f"https://chzzk.naver.com/{user['chid']}")
 
 labell = []
@@ -167,7 +179,7 @@ def update_labels():
         if user['onlive']:
             if user['id'] not in labell:
                 # 새로운 프레임과 라벨 생성
-                frame = Frame(tk, bg="white", padx=10, pady=10, bd=1, relief="solid")
+                frame = Frame(main, bg="white", padx=10, pady=10, bd=1, relief="solid")
                 frame.pack(padx=10, pady=5, fill="x")
 
                 # 36글자 넘으면 자르기
@@ -188,10 +200,11 @@ def update_labels():
                         if os.path.exists(f"images/{channelImageUrlname}"):
                             image = Image.open(f"images/{channelImageUrlname}")  # 이미지 경로를 실제 파일 경로로 바꾸세요.
                         else:
+                            printt("update_labels  이미지 파일을 찾을수 없습니다")
                             image = Image.open(f"images/ERROR.png")
                             user["channelImagdownload"] = False
                             write_json(json_file_path , data)
-                            api_get_reload
+                            reload_button()
 
                         image = image.resize((50, 50))  # 이미지 크기 조절 (선택 사항)
                         photo = ImageTk.PhotoImage(image)
@@ -201,7 +214,7 @@ def update_labels():
                         image_label.image = photo  # 이미지가 가비지 컬렉션 되지 않도록 참조 유지
                         image_label.pack(side="left")
                 except Exception as e:
-                    print(f"이미지 로드 오류: {e}")
+                    printterror(f"update_labels  이미지 로드 오류: {e}")
                 label.pack(side="left", padx=10)
 
                 label.bind("<Button-1>", lambda e, name=user['name']: open_link(name))
@@ -215,23 +228,27 @@ def update_labels():
                 frame.destroy()  # 프레임 삭제
                 labell.remove(user['id'])  # 라벨에서 ID 제거
 
-    print(f"{labell} 라벨 라벨")
-    tk.after(60000, update_labels)  # 1분마다 업데이트
+    printt(f"update_labels  현재 목록 라벨에 올라가있는 스트리머의 id {labell}")
+    main.after(60000, update_labels)  # 1분마다 업데이트
 
 
 def reload_button():
     try:
         update_labels()
         api_get()
+        update_labels()
     except Exception as e:
-        print(e)
+        printterror(f"리로드 버튼 에러 \n{e}")
         messagebox.showerror("에러 발생", f"알수 없는 오류 발생 : {e}")
 
 
 # 설정 버튼 함수
 def setting():
-    print("설정")
-    subprocess.run(['python','App.py'])
+    try:
+        printt("설정버튼 클릭을 감지 하였습니다 app.py실행")
+        subprocess.run(['python','App.py'])
+    except Exception as e:
+        printterror(f"설정 버튼 함수 오류 : \n{e}")
 
 def start_program_function():
     data = read_json(setting_json)
@@ -250,20 +267,20 @@ def start_program_function():
             if os.path.exists(wichi):
                 try:
                     shutil.copyfile(wichi, target_path)  # 원본 파일과 대상 파일 경로 제공
-                    print("파일이 성공적으로 복사되었습니다.")
+                    printt("파일이 성공적으로 복사되었습니다.")
                     
                     # JSON 설정 업데이트
                     data["setting"]["start_program"] = True
                     write_json(setting_json, data)  # 설정 업데이트
                 except Exception as e:
-                    print(f"파일 복사 중 오류 발생: {e}")
+                    printterror(f"파일 복사 중 오류 발생: \n{e}")
             else:
-                print("원본 파일을 찾을 수 없습니다.")
+                printt("원본 파일을 찾을 수 없습니다.")
         else:
             data["setting"]["start_program"] = True
             write_json(setting_json, data)
     else:
-        print("이미 파일이 존재합니다.")
+        printt("이미 파일이 존재합니다.")
 
 
 start_program_function()
@@ -271,29 +288,39 @@ start_program_function()
 # JSON 데이터 읽기
 data = read_json(json_file_path)
 
-tk = Tk()
-tk.geometry("600x700")  # 창의 크기를 적절하게 변경
-tk.title("치지직 뱅온 알림")
-tk.configure(bg="#f0f0f0")
+main = Tk()
+main.geometry("600x700")  # 창의 크기를 적절하게 변경
+main.title("치지직 뱅온 알림")
+main.configure(bg="#f0f0f0")
+
+def on_closing():
+    main.destroy()  # maininter 창 종료
+    sys.exit()    # 프로세스 종료
+
+def closing():
+    main.destroy()
+    sys.exit()
+
+main.protocol("WM_DELETE_WINDOW", on_closing)  # 창 닫기 이벤트에 on_closing 함수 등록
 
 # 각 스트리머의 정보를 라벨로 표시
-header_frame = Frame(tk, bg="#0078d4", pady=10)
+header_frame = Frame(main, bg="#0078d4", pady=10)
 header_frame.pack(fill="x")
 header_label = Label(header_frame, text="방송중인 스트리머 목록\n(창을 끄면 알림을 못 받아요!!!)\n(추가, 삭제는 set파일 사용)", font=("굴림", 15), bg="#0078d4", fg="white")
 header_label.pack()
 
 # 설정 버튼 추가
-settings_button = Button(tk, text="설정", font=("굴림", 12), command=setting)
+settings_button = Button(main, text="설정", font=("굴림", 12), command=setting)
 settings_button.pack(pady=10)
 
 # 스트리밍 상태 로드 버튼 추가 (오른쪽 아래 배치)
-api_get_reload = Button(tk, text="스트리밍 상태 리로드", font=("굴림", 12), bg="yellow", command=reload_button)
+api_get_reload = Button(main, text="스트리밍 상태 리로드", font=("굴림", 12), bg="yellow", command=reload_button)
 api_get_reload.place(relx=1, rely=1, anchor="se")
 
 # 초기 업데이트 및 주기적 업데이트 설정
 api_get()
 update_labels()
-tk.after(60000, lambda: api_get())  # 1분마다 API 요청
+main.after(60000, lambda: api_get())  # 1분마다 API 요청
 
 # 이벤트 루프 시작
-tk.mainloop()
+main.mainloop()

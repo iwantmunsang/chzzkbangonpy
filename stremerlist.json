@@ -2,15 +2,27 @@
     "users": [
         {
             "id": 1,
-            "name": "ads",
-            "chid": "0dad8baf12a436f722faa8e5001c5011",
-            "onlive": true,
-            "bangonallrm": true,
+            "name": "https://chzzk.naver.com/4f3626031d1ff12931a34242a7f6900f",
+            "chid": "4f3626031d1ff12931a34242a7f6900f",
+            "onlive": false,
+            "bangonallrm": false,
             "bangoffallrm": false,
-            "livetitle": "포기하지않는게 내마법이다!!! 에메켠왕 (시작 플2 58 > 9일차 골2 30 > 10일차 골1 1)",
-            "channelImageUrl": "https://nng-phinf.pstatic.net/MjAyNDAxMTRfMTUy/MDAxNzA1MTY2NzAxMDM0.jxRoo4V4TdOptYggL80STQpPI-gHlzL43jzAaStOnsAg.3xenvZbIgK6vdP82zXdEG3w5X0rrKphOGY0HhTlM_58g.PNG/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2024-01-14_022438.png",
-            "channelImagdownload": true,
-            "channelImagename": "MDAxNzA1MTY2NzAxMDM0.jxRoo4V4TdOptYggL80STQpPI-gHlzL43jzAaStOnsAg.3xenvZbIgK6vdP82zXdEG3w5X0rrKphOGY0HhTlM_58g.PNG"
+            "livetitle": "제목 없음",
+            "channelImageUrl": null,
+            "channelImagdownload": false,
+            "channelImagename": null
+        },
+        {
+            "id": 2,
+            "name": "https://chzzk.naver.com/4f3626031d1ff12931a34242a7f6900f",
+            "chid": "a",
+            "onlive": false,
+            "bangonallrm": false,
+            "bangoffallrm": false,
+            "livetitle": "제목 없음",
+            "channelImageUrl": null,
+            "channelImagdownload": false,
+            "channelImagename": null
         }
     ]
 }

@@ -1,16 +1,3 @@
 {
-    "users": [
-        {
-            "id": 1,
-            "name": "bb",
-            "chid": "9d4f299325b38f9183bdb90b8849d912",
-            "onlive": true,
-            "bangonallrm": true,
-            "bangoffallrm": false,
-            "livetitle": "롤 초보 괴롭히기 ",
-            "channelImageUrl": "https://nng-phinf.pstatic.net/MjAyNDAxMTlfMjg1/MDAxNzA1NjU4MTY2ODU4.qK4EfbeSUEFMcrhyN-dPyAPUWIIawZDHov_JlDNw28kg.Y4ZZCm5U6XlZ6Oyj-1JyWWP6KI9NtheRTRZ1sB_Yb2Ug.PNG/558C0E86-BEE1-4CB1-8814-F503574FD862-1705658162.png",
-            "channelImagdownload": true,
-            "channelImagename": "MDAxNzA1NjU4MTY2ODU4.qK4EfbeSUEFMcrhyN-dPyAPUWIIawZDHov_JlDNw28kg.Y4ZZCm5U6XlZ6Oyj-1JyWWP6KI9NtheRTRZ1sB_Yb2Ug.PNG"
-        }
-    ]
+    "users": []
 }
