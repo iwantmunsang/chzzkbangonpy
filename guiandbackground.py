@@ -12,6 +12,7 @@ import imge
 from PIL import Image, ImageTk
 import sys
 import datetime
+import getpass
 
 falstbagoffallrm = False
 
@@ -251,22 +252,24 @@ def setting():
         printterror(f"설정 버튼 함수 오류 : \n{e}")
 
 def start_program_function():
+    # 설정 파일을 읽음
     data = read_json(setting_json)
     start_program = data["setting"]["start_program"]
     
     # start_program이 False일 때만 실행
     if not start_program:
-        if messagebox.askyesno("시작 프로그램으로 등록 할까요?", "컴퓨터가 실행 되면 같이 실행 할까요?"):
+        if messagebox.askyesno("시작 프로그램으로 등록 할까요?", "컴퓨터가 실행되면 같이 실행할까요?"):
             abc = os.getcwd()  # 현재 작업 디렉토리 가져오기
-            wichi = os.path.join(abc, "치지직뱅온알람기.lnk")  # 경로 설정 (os.path.join 사용)
+            wichi = os.path.join(abc, "치지직뱅온알람기.lnk")  # 원본 파일 경로
+            username = getpass.getuser()
             
-            # 복사할 대상 경로 설정
-            target_path = r"C:\Users\USER\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\치지직뱅온알람기.lnk"
+            # 복사할 대상 경로에 파일 이름까지 포함
+            target_path = os.path.join(rf"C:\Users\{username}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup", "치지직뱅온알람기.lnk")
             
-            # 파일 복사
+            # 원본 파일이 존재하는지 확인
             if os.path.exists(wichi):
                 try:
-                    shutil.copyfile(wichi, target_path)  # 원본 파일과 대상 파일 경로 제공
+                    shutil.copyfile(wichi, target_path)  # 파일 복사
                     printt("파일이 성공적으로 복사되었습니다.")
                     
                     # JSON 설정 업데이트
@@ -275,12 +278,12 @@ def start_program_function():
                 except Exception as e:
                     printterror(f"파일 복사 중 오류 발생: \n{e}")
             else:
-                printt("원본 파일을 찾을 수 없습니다.")
+                printterror(f"원본 파일을 찾을 수 없습니다: {wichi}")
         else:
             data["setting"]["start_program"] = True
             write_json(setting_json, data)
     else:
-        printt("이미 파일이 존재합니다.")
+        printt("이미 시작 프로그램으로 등록되었습니다.")
 
 
 start_program_function()
