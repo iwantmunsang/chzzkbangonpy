@@ -4,7 +4,6 @@ import os
 import requests
 import time
 import webbrowser
-from plyer import notification
 import subprocess
 from tkinter import messagebox
 import shutil
@@ -13,6 +12,7 @@ from PIL import Image, ImageTk
 import sys
 import datetime
 import getpass
+from winotify import Notification , audio
 
 falstbagoffallrm = False
 
@@ -74,13 +74,15 @@ def api_get():
             name = api_data.get('content', {}).get('channelName')
             url = f"https://api.chzzk.naver.com/polling/v1/channels/{chids}/live-status"
             response = requests.get(url , headers=headers)
-            channelImageUrl = api_data.get('content',{}).get('channelImageUrl')
+            channelImageUrl = api_data.get('content', {}).get('channelImageUrl')
             printt(f"api get  Open Live: {openlive}")
             printt(f"api get  channelImageUrl : {channelImageUrl}")
             user['onlive'] = openlive
             user['channelImageUrl'] = channelImageUrl
             last_part = channelImageUrl.split('/')[-2]
+
             channelImageUrlname = last_part
+
             if not user['channelImagdownload']:
                 user['channelImagename'] = channelImageUrlname
             elif user['channelImagdownload'] and not user['channelImagename'] == channelImageUrlname:
@@ -88,8 +90,9 @@ def api_get():
                 imge.imge(channelImageUrl, channelImageUrlname , "images")
                 user['channelImagdownload'] = True
 
+
             ############################################ 이미지 다운
-            if not user['channelImagdownload']:
+            if user['channelImagdownload'] == None:
                 try:
                     printt(f"api get  {channelImageUrlname}의 다운로드를 시도합니다")
                     imge.imge(channelImageUrl, channelImageUrlname , "images")
@@ -97,7 +100,10 @@ def api_get():
                 except Exception as e:
                     printterror(f"api get  초기 이미지 다운로드중 오류가 발생 하였습니다 {e}")
             ############################################################################################################################################
+
             if openlive:
+                relative_path = f"images/{channelImageUrlname}"
+                absolute_path = os.path.abspath(relative_path)
                 url2 = f"https://api.chzzk.naver.com/polling/v1/channels/{chids}/live-status"
                 response = requests.get(url2, headers=headers)
                 apidata = response.json()
@@ -105,20 +111,31 @@ def api_get():
                 printt(f"api get  방송중인 스트리머의 스트리밍 제목 : {strimingname}")
                 user['livetitle'] = strimingname
                 if not user["bangonallrm"] and setting['message']['bangon_message'] == "default":
-                    notification.notify(
-                        title=f"{name}",
-                        message=f"{name}님이 방송중 입니다!!\n제목 : {strimingname}",
-                        timeout=10
-                    )
+                    toast = Notification(app_id= "치지직뱅온알람",
+                                         title=f"{name}",
+                                         msg=f"{name}님이 방송중 입니다!!\n제목 : {strimingname}",
+                                         icon= fr"{absolute_path}",
+                                         duration= "short")
+                    toast.add_actions(label="방송 보러가기", launch=f"https://chzzk.naver.com/{user["chid"]}")
+                    toast.set_audio(audio.Default, loop=False)
+                    toast.show()
                     user['bangonallrm'] = True
                     user['bangoffallrm'] = False
                     user['livetitle'] = strimingname
                 elif not setting['message']['bangon_message'] == "default" and not user["bangonallrm"]:
-                    notification.notify(
-                        title=f"{name}",
-                        message=f"{setting['message']['bangon_message']}\n제목 : {strimingname}",
-                        timeout=10
-                    )
+                    # notification.notify(
+                    #     title=f"{name}",
+                    #     message=f"{setting['message']['bangon_message']}\n제목 : {strimingname}",
+                    #     icon = f"images/{channelImageUrlname}",
+                    #     timeout=10
+                    # )
+                    toast = Notification(app_id= "치지직뱅온알람",
+                                         title=f"{name}",
+                                         msg=f"{setting['message']['bangon_message']}\n제목 : {strimingname}",
+                                         icon= fr"{absolute_path}",
+                                        duration= "short")
+                    toast.set_audio(audio.Default, loop=False)
+                    toast.show()
                     user['bangonallrm'] = True
                     user['bangoffallrm'] = False
                     user['livetitle'] = strimingname
@@ -129,17 +146,33 @@ def api_get():
                     user['bangonallrm'] = False
                     if falstbagoffallrm:
                         if setting_val['setting']["bangoff"] and setting['message']['bangoff_message'] == "default":
-                            notification.notify(
-                                title=f"{name}님이 방송을 종료 하였습니다",
-                                message=f"{name}님이 방송을 종료 하였습니다",
-                                timeout=10
-                            )
+                            # notification.notify(
+                            #     title=f"{name}님이 방송을 종료 하였습니다",
+                            #     message=f"{name}님이 방송을 종료 하였습니다",
+                            #     icon = f"images/{channelImageUrlname}",
+                            #     timeout=10
+                            # )
+                            toast = Notification(app_id= "치지직뱅온알람",
+                                         title=f"{name}님이 방송을 종료 하였습니다",
+                                         msg=f"{name}님이 방송을 종료 하였습니다",
+                                         icon= fr"{absolute_path}",
+                                        duration= "short")
+                            toast.set_audio(audio.Default, loop=False)
+                            toast.show()
                         elif setting_val['setting']["bangoff"] and not setting['message']['bangoff_message'] == "default":
-                            notification.notify(
-                                title=f"{name}님이 방송을 종료 하였습니다",
-                                message=f"{setting['message']['bangoff_message']}",
-                                timeout=10
-                            )
+                            # notification.notify(
+                            #     title=f"{name}님이 방송을 종료 하였습니다",
+                            #     message=f"{setting['message']['bangoff_message']}",
+                            #     icon = f"images/{channelImageUrlname}",
+                            #     timeout=10
+                            # )
+                            toast = Notification(app_id= "치지직뱅온알람",
+                                         title=f"{name}님이 방송을 종료 하였습니다",
+                                         msg=f"{setting['message']['bangoff_message']}",
+                                         icon= fr"{absolute_path}",
+                                        duration= "long")
+                            toast.set_audio(audio.Default, loop=False)
+                            toast.show()
         time.sleep(0.8)
         # JSON 파일에 업데이트된 데이터 쓰기
         write_json(json_file_path, data)
@@ -148,11 +181,19 @@ def api_get():
 
 # 이름으로 URL 열기 함수
 def open_link(name):
+
     data = read_json(json_file_path)
     for user in data["users"]:
         if user["name"] == name:
             printt(f"open_link  제목을 클릭하여 링크를 엽니다 chid = {user["chid"]}")
             webbrowser.open(f"https://chzzk.naver.com/{user['chid']}")
+
+def get_link(name):
+    data = read_json(json_file_path)
+    for user in data["users"]:
+        if user["name"] == name:
+            printt(f"open_link  제목을 클릭하여 링크를 엽니다 chid = {user["chid"]}")
+            return f"https://chzzk.naver.com/{user['chid']}"
 
 labell = []
 

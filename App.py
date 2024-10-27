@@ -16,7 +16,8 @@ def printt(message:str):
     print(f"INFO | [{datetime.datetime.today().strftime("%Y/%m/%d %H:%M:%S")}]  :  {message}")
 
 def printterror(message:str):
-    printt(f"ERROR | \n\n\n 오류가 발생 하였지만 프로그램을 종류하지 않고 계속 실행합니다. \n {message}\n\n\n")
+    printt(f"ERROR | \n\n\n 오류가 발생 하였지만 프로그램을 종료하지 않고 계속 실행합니다. \n {message}\n\n\n")
+    messagebox.showerror("ERROR" , f"오류가 발생 하였지만 프로그램을 종료하지 않고 계속 실행 합니다. \n{message}")
 
 # JSON 파일 읽기 함수
 def read_json(file_path):
@@ -51,15 +52,26 @@ def add_streamer():
         
         if not id or not name:
             messagebox.showerror("입력 오류", "모든 필드를 입력하세요!")
-            printterror("add_streamer  스트리머 추가 실패: ID 또는 이름이 입력되지 않음")
+            printt("add_streamer  스트리머 추가 실패: ID 또는 이름이 입력되지 않음")
             return
 
         if "/" in id:
             last_part = id.split('/')[-1]
             id = last_part
             printt(f"add_streamer  네이버 ID에서 마지막 부분 추출: {id}")
+
+        if len(id) <= 20:
+            messagebox.showerror("chid에러","채널 아이디가 너무 짧습니다.")
+            return
         
         data = read_json(json_file_path)
+
+        for users in data["users"]:
+            if users["chid"] == id:
+                messagebox.showerror("chid에러","중복된 채널 아이디 값입니다.")
+                return
+
+
         if "users" not in data:
             data["users"] = []
 

@@ -1,0 +1,78 @@
+Start Time: 2024/10/25 22:04:51
+End Time: 2024/10/25 22:04:57
+STDOUT: [2024/10/25 22:04:52]  :  이미 시작 프로그램으로 등록되었습니다.
+[2024/10/25 22:04:53]  :  api get  Open Live: False
+[2024/10/25 22:04:53]  :  api get  channelImageUrl : https://nng-phinf.pstatic.net/MjAyMzEyMThfMjUg/MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG/%EB%A6%BC%EC%8A%A4_%ED%94%84%EB%A1%9C%ED%95%84.jpg
+[2024/10/25 22:04:53]  :  api get  MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG의 다운로드를 시도합니다
+INFO | [2024/10/25 22:04:53]  :  이미지 다운로드 imge.py에러 : 
+printt() takes 1 positional argument but 2 were given
+[2024/10/25 22:04:54]  :  api get  Open Live: False
+[2024/10/25 22:04:54]  :  api get  channelImageUrl : None
+[2024/10/25 22:04:54]  :  
+
+
+ 오류가 발생 하였지만 프로그램을 종류하지 않고 계속 실행합니다. 
+ Error api_get: 'NoneType' object has no attribute 'split'
+
+
+
+[2024/10/25 22:04:54]  :  update_labels  현재 목록 라벨에 올라가있는 스트리머의 id []
+
+STDERR: 0.01s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+
+
+Start Time: 2024/10/25 22:05:21
+End Time: 2024/10/25 22:05:26
+STDOUT: [2024/10/25 22:05:22]  :  이미 시작 프로그램으로 등록되었습니다.
+[2024/10/25 22:05:23]  :  api get  Open Live: False
+[2024/10/25 22:05:23]  :  api get  channelImageUrl : https://nng-phinf.pstatic.net/MjAyMzEyMThfMjUg/MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG/%EB%A6%BC%EC%8A%A4_%ED%94%84%EB%A1%9C%ED%95%84.jpg
+[2024/10/25 22:05:23]  :  api get  MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG의 다운로드를 시도합니다
+INFO | [2024/10/25 22:05:23]  :  이미지 다운로드 imge.py에러 : 
+printt() takes 1 positional argument but 2 were given
+[2024/10/25 22:05:24]  :  api get  Open Live: False
+[2024/10/25 22:05:24]  :  api get  channelImageUrl : None
+[2024/10/25 22:05:24]  :  
+
+
+ 오류가 발생 하였지만 프로그램을 종류하지 않고 계속 실행합니다. 
+ Error api_get: 'NoneType' object has no attribute 'split'
+
+
+
+[2024/10/25 22:05:24]  :  update_labels  현재 목록 라벨에 올라가있는 스트리머의 id []
+
+STDERR: 0.01s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+
+
+Start Time: 2024/10/25 22:14:17
+End Time: 2024/10/25 22:14:22
+STDOUT: [2024/10/25 22:14:18]  :  이미 시작 프로그램으로 등록되었습니다.
+[2024/10/25 22:14:19]  :  api get  Open Live: False
+[2024/10/25 22:14:19]  :  api get  channelImageUrl : https://nng-phinf.pstatic.net/MjAyMzEyMThfMjUg/MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG/%EB%A6%BC%EC%8A%A4_%ED%94%84%EB%A1%9C%ED%95%84.jpg
+[2024/10/25 22:14:19]  :  api get  MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG의 다운로드를 시도합니다
+INFO | [2024/10/25 22:14:19]  :  이미지 다운로드 imge.py에러 : 
+printt() takes 1 positional argument but 2 were given
+[2024/10/25 22:14:20]  :  api get  Open Live: False
+[2024/10/25 22:14:20]  :  api get  channelImageUrl : None
+[2024/10/25 22:14:20]  :  
+
+
+ 오류가 발생 하였지만 프로그램을 종류하지 않고 계속 실행합니다. 
+ Error api_get: 'NoneType' object has no attribute 'split'
+
+
+
+[2024/10/25 22:14:20]  :  update_labels  현재 목록 라벨에 올라가있는 스트리머의 id []
+
+STDERR: 0.01s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+
+

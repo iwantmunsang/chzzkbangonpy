@@ -4,25 +4,13 @@
             "id": 1,
             "name": "https://chzzk.naver.com/4f3626031d1ff12931a34242a7f6900f",
             "chid": "4f3626031d1ff12931a34242a7f6900f",
-            "onlive": false,
-            "bangonallrm": false,
+            "onlive": true,
+            "bangonallrm": true,
             "bangoffallrm": false,
-            "livetitle": "제목 없음",
-            "channelImageUrl": null,
+            "livetitle": "플래닛 크래프터 엔딩갑니까?",
+            "channelImageUrl": "https://nng-phinf.pstatic.net/MjAyMzEyMThfMjUg/MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG/%EB%A6%BC%EC%8A%A4_%ED%94%84%EB%A1%9C%ED%95%84.jpg",
             "channelImagdownload": false,
-            "channelImagename": null
-        },
-        {
-            "id": 2,
-            "name": "https://chzzk.naver.com/4f3626031d1ff12931a34242a7f6900f",
-            "chid": "a",
-            "onlive": false,
-            "bangonallrm": false,
-            "bangoffallrm": false,
-            "livetitle": "제목 없음",
-            "channelImageUrl": null,
-            "channelImagdownload": false,
-            "channelImagename": null
+            "channelImagename": "MDAxNzAyOTA1MjY1NTM1.kBdadHp17ATBAt5XbaeIxdlw2AYgFCdGkoQP6JJW8pEg.cRpnPw04hOQcFXVer1-nABzDip9lwhZt_WyMOs1zzPgg.JPEG"
         }
     ]
 }
