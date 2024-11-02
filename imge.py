@@ -4,7 +4,7 @@ from PIL import Image
 import time
 import datetime
 
-def printt(message:str):
+def printt(message):
     print(f"INFO | [{datetime.datetime.today().strftime("%Y/%m/%d %H:%M:%S")}]  :  {message}")
 
 def printterror(message:str):
@@ -37,15 +37,14 @@ def imge(link: str, name: str, save_path: str = "."):
             f.write(response.content)
 
         # 이미지 다운로드 시간 체크
-        printt("다운로드 시간:", time.time() - start)
+        printt(f"다운로드 시간: {time.time() - start}")
 
 
         printt(f"이미지가 {save_path}에 저장되었습니다.")
     except Exception as e:
         printt(f"이미지 다운로드 imge.py에러 : \n{e}")
 
-# 예시 호출
-# image_url = "https://dispatch.cdnser.be/cms-content/uploads/2020/04/09/a26f4b7b-9769-49dd-aed3-b7067fbc5a8c.jpg"
+# image_url = "https://nng-phinf.pstatic.net/MjAyNDA1MTVfMTUx/MDAxNzE1NzU5NDAyNjMw._KFvKTGvQ4J7L6G9zutnjrNpN3GxLRE7MNnxZ8AFwjkg.ssr7rO32NC1SPIZcGlRT2An_b8LvQHxwGAuEdtm1nXEg.PNG/STELLIVE_%EB%A6%B0.png"
 # image_name = "downloaded_image.jpg"
 # save_directory = "images"  # 저장할 폴더 경로
 

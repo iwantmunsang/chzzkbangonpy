@@ -8,6 +8,8 @@ from tkinter import filedialog
 import sys
 import webbrowser
 import datetime
+import subprocess
+
 # JSON 파일 경로
 json_file_path = 'stremerlist.json'
 setting_file = 'setting.json'
@@ -18,6 +20,7 @@ def printt(message:str):
 def printterror(message:str):
     printt(f"ERROR | \n\n\n 오류가 발생 하였지만 프로그램을 종료하지 않고 계속 실행합니다. \n {message}\n\n\n")
     messagebox.showerror("ERROR" , f"오류가 발생 하였지만 프로그램을 종료하지 않고 계속 실행 합니다. \n{message}")
+
 
 # JSON 파일 읽기 함수
 def read_json(file_path):
@@ -31,6 +34,13 @@ def read_json(file_path):
 def write_json(file_path, data):
     with open(file_path, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+def set_font():
+    global selected_font
+    data = read_json(setting_file)
+    selected_font = data["setting"]["font"]
+
+set_font()
 
 # 스트리머 추가 함수
 def add_streamer():
@@ -311,7 +321,7 @@ def all_reset_button_function():
             
 
             # 리셋 완료 메시지 박스
-            messagebox.showinfo("리셋 완료", "리셋이 완벽히 진행 되었습니다. 프로그램을 재시작 합니다.")
+            messagebox.showinfo("리셋 완료", "리셋이 완벽히 진행 되었습니다. 프로그램을 재시작 해주세요")
 isteregg = False
 def isteregg_onoff_button_function():
     if messagebox.askyesno("🥚is터egg🥚 호ㅏㄹ sungㅎㅏㅗ" , "🥚이🥚s🥚ㅌㅓ🥚달🥚걀🥚을 활성화 할까요????????"):
@@ -333,12 +343,17 @@ def show_imgae_function():
     printt(f"show_imgae_function  이미지 표시 값 : {show_imgae_value} , {data["setting"]["showimage"]}")
 
 
-    
+def open_advanced_setting_function():
+    try:
+        subprocess.Popen(['python','open_advanced_setting.py'])
+    except Exception as e:
+        printt(e)
+
 
 
 # tkinter GUI 설정
 tk = Tk()
-tk.geometry("600x600")
+tk.geometry(f"{read_json('setting.json')["setting"]["window_size"]["setting"]}")
 tk.title("치지직 뱅온 알림 설정기")
 
 
@@ -347,34 +362,35 @@ tk.title("치지직 뱅온 알림 설정기")
 frame_top = Frame(tk)
 frame_top.pack(pady=20)
 
-Label(frame_top, text="치지직 뱅온 알람기 설정", font=("굴림", 12)).grid(row=0, columnspan=2)
 
-Label(frame_top, text="채널 아이디", font=("굴림", 12)).grid(row=1, column=0, pady=5)
+Label(frame_top, text="치지직 뱅온 알람기 설정", font=(f"{selected_font}", 12)).grid(row=0, columnspan=2)
+
+Label(frame_top, text="채널 아이디", font=(f"{selected_font}", 12)).grid(row=1, column=0, pady=5)
 id_entry = Entry(frame_top)
 id_entry.grid(row=1, column=1, pady=5)
 
-Label(frame_top, text="이름", font=("굴림", 12)).grid(row=2, column=0, pady=5)
+Label(frame_top, text="이름", font=(f"{selected_font}", 12)).grid(row=2, column=0, pady=5)
 name_entry = Entry(frame_top)
 name_entry.grid(row=2, column=1, pady=5)
 
-add_button = Button(frame_top, text="스트리머 추가", command=add_streamer, font=("굴림", 12))
+add_button = Button(frame_top, text="스트리머 추가", command=add_streamer, font=(f"{selected_font}", 12))
 add_button.grid(row=3, columnspan=2, pady=10)
 
 # 스트리머 리스트를 표시하는 부분
-listbox = Listbox(tk, width=80, height=10)
+listbox = Listbox(tk, width=80, height=10 ,font=(f"{selected_font}",10))
 listbox.pack(pady=20)
 
 # 하단에 있는 버튼 부분
 frame_bottom = Frame(tk)
 frame_bottom.pack(pady=10)
 
-refresh_button = Button(frame_bottom, text="목록 갱신", command=refresh_streamer_list, font=("굴림", 12))
+refresh_button = Button(frame_bottom, text="목록 갱신", command=refresh_streamer_list, font=(f"{selected_font}", 12))
 refresh_button.grid(row=0, column=0, padx=10)
 
-delete_button = Button(frame_bottom, text="스트리머 삭제", command=delete_streamer, font=("굴림", 12))
+delete_button = Button(frame_bottom, text="스트리머 삭제", command=delete_streamer, font=(f"{selected_font}", 12))
 delete_button.grid(row=0, column=1, padx=10)
 
-reset_button = Button(frame_bottom, text="스트리머 목록 초기화", command=reset_streamer_list, font=("굴림", 12))
+reset_button = Button(frame_bottom, text="스트리머 목록 초기화", command=reset_streamer_list, font=(f"{selected_font}", 12))
 reset_button.grid(row=0, column=2, padx=10)
 
 # 방종 알람 메시지 설정 부분
@@ -390,48 +406,50 @@ frame_3.pack(pady=5)
 frame_4 = Frame(tk)
 frame_4.pack(pady=5)
 
-
-bangoff_message_label = Label(frame_bangoff_message ,text="방종시 메시지" , font=("굴림",12))
+bangoff_message_label = Label(frame_bangoff_message ,text="방종시 메시지" , font=(f"{selected_font}",10))
 bangoff_message_label.grid(row=0, column=0, padx=5)
 
 bangoff_message_input = Entry(frame_bangoff_message, width=30)
 bangoff_message_input.grid(row=0, column=1, padx=5)
 
-bangoff_message_button = Button(frame_bangoff_message, text="설정" , command=bangoff_message_btn)
+bangoff_message_button = Button(frame_bangoff_message, text="설정" ,font=(f"{selected_font}",10), command=bangoff_message_btn)
 bangoff_message_button.grid(row=0, column=2, padx=5)
 
-bangoff_message_deflat_load_button = Button(frame_bangoff_message , text="기본값 로드" , command=bangoff_message_btn_deflat_load)
+bangoff_message_deflat_load_button = Button(frame_bangoff_message , text="기본값 로드" ,font=(f"{selected_font}",10), command=bangoff_message_btn_deflat_load)
 bangoff_message_deflat_load_button.grid(row=0, column=3, padx=5)
 
 # 뱅온 메시지 설정 구역
-bangon_message_label = Label(frame_bangon_message ,text="뱅온시 알림 메시지" , font=("굴림",12))
+bangon_message_label = Label(frame_bangon_message ,text="뱅온시 알림 메시지" , font=(f"{selected_font}",10))
 bangon_message_label.grid(row=0, column=0, padx=5)
 
 bangon_message_input = Entry(frame_bangon_message, width=30)
 bangon_message_input.grid(row=0, column=1, padx=5)
 
-bangon_message_button = Button(frame_bangon_message, text="설정", command=bangon_message_btn)
+bangon_message_button = Button(frame_bangon_message, text="설정",font=(f"{selected_font}",10), command=bangon_message_btn)
 bangon_message_button.grid(row=0, column=2, padx=5)
 
-bangon_message_deflat_load_button = Button(frame_bangon_message , text="기본값 로드" , command=bangon_message_btn_deflat_load)
+bangon_message_deflat_load_button = Button(frame_bangon_message , text="기본값 로드" ,font=(f"{selected_font}",10), command=bangon_message_btn_deflat_load)
 bangon_message_deflat_load_button.grid(row=0, column=3, padx=5)
 
-bangoff_set_button = Button(frame_3 ,text=f"방종 알람 현제 상태 : {bangoff_set}",font=("굴림",12), command=bangoff_set_button_command)
+bangoff_set_button = Button(frame_3 ,text=f"방종 알람 현제 상태 : {bangoff_set}",font=(f"{selected_font}",10), command=bangoff_set_button_command)
 bangoff_set_button.grid(row=0, column=3, padx=5)
 
-bunhaun_button = Button(frame_3 , text="이전 버전 리스트 불러오기" , command=bunhaun_button_function)
+bunhaun_button = Button(frame_3 , text="이전 버전 리스트 불러오기" ,font=(f"{selected_font}",10), command=bunhaun_button_function)
 bunhaun_button.grid(row=0 , column=4, padx=5)
 
-show_image = Button(frame_3 , text=f"이미지 표시 | 현제 상태 : {show_imgae_value}" , command=show_imgae_function)
+show_image = Button(frame_3 , text=f"이미지 표시 | 현제 상태 : {show_imgae_value}" ,font=(f"{selected_font}",10), command=show_imgae_function)
 show_image.grid(row=0 , column=5, padx=5)
 
-all_reset_button = Button(frame_4 , text="모든 설정 리셋" , command=all_reset_button_function , bg="red")
+all_reset_button = Button(frame_4 , text="모든 설정 리셋" ,font=(f"{selected_font}",10), command=all_reset_button_function , bg="red")
 all_reset_button.grid(row=0 , column=1, padx=5)
 
 isteregg_button = random.randrange(1 , 1000000000)
 if isteregg_button == 123445:
-    isteregg_onoff_button = Button(frame_4 , text="🥚이스터에그🥚" , command=isteregg_onoff_button_function)
+    isteregg_onoff_button = Button(frame_4 , text="🥚이스터에그🥚" ,font=(f"{selected_font}",10), command=isteregg_onoff_button_function)
     isteregg_onoff_button.grid(row=0 , column=2, padx=5)
+
+open_advanced_setting = Button(frame_4 , text="고급 설정 열기",font=(f"{selected_font}",10), command=open_advanced_setting_function)
+open_advanced_setting.grid(row=0 , column=2, padx=5)
 
 refresh_streamer_list()
 printt("app.py 실행 성공")

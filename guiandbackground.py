@@ -47,6 +47,13 @@ def write_json(file_path, data):
     with open(file_path, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
+def set_font():
+    global selected_font
+    data = read_json(setting_json)
+    selected_font = data["setting"]["font"]
+
+set_font()
+
 # API GET 요청 함수
 def api_get():
     try:
@@ -83,8 +90,13 @@ def api_get():
 
             channelImageUrlname = last_part
 
+            if os.path.exists(f"images//{channelImageUrlname}"):
+                printt(f"api_get  {channelImageUrlname}파일이 존재 합니다")
+                user['channelImagdownload'] = True
             if not user['channelImagdownload']:
                 user['channelImagename'] = channelImageUrlname
+                imge.imge(channelImageUrl, channelImageUrlname , "images")
+                user['channelImagdownload'] = True
             elif user['channelImagdownload'] and not user['channelImagename'] == channelImageUrlname:
                 printt(f"api get  채널 이미지 url의 변경을 감지 하였습니다 재 다운로드를 시도합니다  다운로드하는 스트리머의 channelImageUrlname : {channelImageUrlname}")
                 imge.imge(channelImageUrl, channelImageUrlname , "images")
@@ -99,6 +111,13 @@ def api_get():
                     user['channelImagdownload'] = True
                 except Exception as e:
                     printterror(f"api get  초기 이미지 다운로드중 오류가 발생 하였습니다 {e}")
+            if not os.path.exists(f"images//{channelImageUrlname}"):
+                printt(f"{channelImageUrlname}파일이 존재하지 않습니다. 다시 다운로드를 시도 합니다")
+                imge.imge(channelImageUrl, channelImageUrlname , "images")
+                if os.path.exists(f"images//{channelImageUrlname}"):
+                    printt(f"{channelImageUrlname}의 다운로드가 성공 하였습니다.")
+                else:
+                    printt(f"{channelImageUrlname}의 다운로드가 실패 하였습니다.")
             ############################################################################################################################################
 
             if openlive:
@@ -173,7 +192,6 @@ def api_get():
                                         duration= "long")
                             toast.set_audio(audio.Default, loop=False)
                             toast.show()
-        time.sleep(0.8)
         # JSON 파일에 업데이트된 데이터 쓰기
         write_json(json_file_path, data)
     except Exception as e:
@@ -188,12 +206,6 @@ def open_link(name):
             printt(f"open_link  제목을 클릭하여 링크를 엽니다 chid = {user["chid"]}")
             webbrowser.open(f"https://chzzk.naver.com/{user['chid']}")
 
-def get_link(name):
-    data = read_json(json_file_path)
-    for user in data["users"]:
-        if user["name"] == name:
-            printt(f"open_link  제목을 클릭하여 링크를 엽니다 chid = {user["chid"]}")
-            return f"https://chzzk.naver.com/{user['chid']}"
 
 labell = []
 
@@ -203,7 +215,6 @@ frames = {}
 def update_labels():
     global falstbagoffallrm
     data = read_json(json_file_path)
-
     # 현재 활성화된 사용자 ID 목록
     active_user_ids = {user['id'] for user in data["users"] if user['onlive']}
 
@@ -218,6 +229,7 @@ def update_labels():
             labell.remove(user_id)  # 라벨에서 ID 제거
 
     for user in data["users"]:
+        # printt(f"{user['channelImagename']}")
         if user['onlive']:
             if user['id'] not in labell:
                 # 새로운 프레임과 라벨 생성
@@ -234,11 +246,13 @@ def update_labels():
                         title = title[0:36] + "..."
 
                 # 텍스트 라벨 생성
-                label = Label(frame, text=f"{title}", font=("굴림", 15), fg="blue", cursor="hand2", bg="white")
+                label = Label(frame, text=f"{title}", font=(f"{selected_font}", 15), fg="blue", cursor="hand2", bg="white")
 
                 # 이미지 처리
                 try:
+                    setting = read_json(setting_json)
                     if setting["setting"]["showimage"]:
+                        channelImageUrlname = f"{user['channelImagename']}"
                         if os.path.exists(f"images/{channelImageUrlname}"):
                             image = Image.open(f"images/{channelImageUrlname}")  # 이미지 경로를 실제 파일 경로로 바꾸세요.
                         else:
@@ -271,26 +285,43 @@ def update_labels():
                 labell.remove(user['id'])  # 라벨에서 ID 제거
 
     printt(f"update_labels  현재 목록 라벨에 올라가있는 스트리머의 id {labell}")
-    main.after(60000, update_labels)  # 1분마다 업데이트
+
+
+apitime:int = None
+
+
+def api_get_time():
+    global apitime
+    data = read_json(setting_json)
+    if data['setting']['api_get_time'] >= 5:
+        apitime = data['setting']['api_get_time'] * 1000
+    else:
+        apitime = 60000  # 1분마다 API 요청
+        printt(f"api_get_time  apitime set 60000")
+    printt(f"api_get_time  api_get_time value : {data['setting']['api_get_time']}")
+    printt(f"api_get_time  apitime value : {apitime}")
 
 
 def reload_button():
     try:
-        update_labels()
         api_get()
         update_labels()
     except Exception as e:
         printterror(f"리로드 버튼 에러 \n{e}")
         messagebox.showerror("에러 발생", f"알수 없는 오류 발생 : {e}")
 
-
 # 설정 버튼 함수
 def setting():
     try:
         printt("설정버튼 클릭을 감지 하였습니다 app.py실행")
-        subprocess.run(['python','App.py'])
+        subprocess.Popen(['python', 'App.py'])  # 별도 프로세스로 실행하여 비동기로 실행됨
+        
     except Exception as e:
         printterror(f"설정 버튼 함수 오류 : \n{e}")
+
+
+
+
 
 def start_program_function():
     # 설정 파일을 읽음
@@ -333,7 +364,7 @@ start_program_function()
 data = read_json(json_file_path)
 
 main = Tk()
-main.geometry("600x700")  # 창의 크기를 적절하게 변경
+main.geometry(f"{read_json('setting.json')["setting"]["window_size"]["main"]}")  # 창의 크기를 적절하게 변경
 main.title("치지직 뱅온 알림")
 main.configure(bg="#f0f0f0")
 
@@ -350,21 +381,24 @@ main.protocol("WM_DELETE_WINDOW", on_closing)  # 창 닫기 이벤트에 on_clos
 # 각 스트리머의 정보를 라벨로 표시
 header_frame = Frame(main, bg="#0078d4", pady=10)
 header_frame.pack(fill="x")
-header_label = Label(header_frame, text="방송중인 스트리머 목록\n(창을 끄면 알림을 못 받아요!!!)\n(추가, 삭제는 set파일 사용)", font=("굴림", 15), bg="#0078d4", fg="white")
+header_label = Label(header_frame, text="방송중인 스트리머 목록\n(창을 끄면 알림을 못 받아요!!!)\n(추가, 삭제는 set파일 사용)", font=(f"{selected_font}", 15), bg="#0078d4", fg="white")
 header_label.pack()
 
 # 설정 버튼 추가
-settings_button = Button(main, text="설정", font=("굴림", 12), command=setting)
+settings_button = Button(main, text="설정", font=(f"{selected_font}", 12), command=setting)
 settings_button.pack(pady=10)
 
 # 스트리밍 상태 로드 버튼 추가 (오른쪽 아래 배치)
-api_get_reload = Button(main, text="스트리밍 상태 리로드", font=("굴림", 12), bg="yellow", command=reload_button)
+api_get_reload = Button(main, text="스트리밍 상태 리로드", font=(f"{selected_font}", 12), bg="yellow", command=reload_button)
 api_get_reload.place(relx=1, rely=1, anchor="se")
 
 # 초기 업데이트 및 주기적 업데이트 설정
 api_get()
 update_labels()
-main.after(60000, lambda: api_get())  # 1분마다 API 요청
+
+api_get_time()
+main.after(apitime, lambda: api_get())
+main.after(apitime, lambda: update_labels())  # 1분마다 업데이트
 
 # 이벤트 루프 시작
 main.mainloop()

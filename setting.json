@@ -2,7 +2,16 @@
     "setting": {
         "bangoff": true,
         "start_program": true,
-        "showimage": true
+        "showimage": true,
+        "debugingmod": false,
+        "api_get_time": 50,
+        "font": "CookieRunOTF Black",
+        "font_size": "none",
+        "window_size": {
+            "main": "600x700",
+            "setting": "600x600",
+            "this": "600x600"
+        }
     },
     "message": {
         "bangon_message": "default",
