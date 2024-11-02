@@ -5,7 +5,7 @@ a = Analysis(
     ['run.py'],
     pathex=[],
     binaries=[],
-    datas=[('debuging/console.txt', 'debuging')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

@@ -23,7 +23,7 @@ def check_python_installed():
 
 # 필수 패키지 설치
 def install_required_packages():
-    required_packages = ["Pillow", "winotify", "requests"]
+    required_packages = ["Pillow", "winotify", "requests" , "pandas"]
     for package in required_packages:
         try:
             log_message(f"Installing {package}...")

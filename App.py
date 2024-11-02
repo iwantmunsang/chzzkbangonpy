@@ -303,7 +303,16 @@ def all_reset_button_function():
                 "setting": {
                     "bangoff": True,
                     "start_program": False
-                    ,"showimage" : True
+                    ,"showimage" : True,
+                    "api_get_time": 60,
+                    "debugingmod": False,
+                    "font": "굴림",
+                    "window_size": {
+                        "main": "600x700",
+                        "setting": "600x600",
+                        "this": "600x600"
+        }
+                    
                 },
                 "message": {
                     "bangon_message": "default",

@@ -3,10 +3,9 @@
         "bangoff": true,
         "start_program": true,
         "showimage": true,
+        "api_get_time": 60,
         "debugingmod": false,
-        "api_get_time": 50,
-        "font": "CookieRunOTF Black",
-        "font_size": "none",
+        "font": "굴림",
         "window_size": {
             "main": "600x700",
             "setting": "600x600",

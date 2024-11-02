@@ -215,17 +215,18 @@ label_setting_window_size.grid(row=0, column=2, padx=5)
 input_setting_window_size = Entry(frame_5 ,width=10)
 input_setting_window_size.grid(row=0, column=3, padx=5)
 
-label_main_window_size = Label(frame_5, text="메인창의 크기 : ", font=(selected_font, 12, "bold"))
-label_main_window_size.grid(row=0, column=4, padx=5)
-
-input_main_window_size = Entry(frame_5 ,width=10)
-input_main_window_size.grid(row=0, column=5, padx=5)
 
 frame_6 = Frame(tk)
 frame_6.pack(pady=5)
 
+label_main_window_size = Label(frame_6, text="메인창의 크기 : ", font=(selected_font, 12, "bold"))
+label_main_window_size.grid(row=0, column=0, padx=5)
+
+input_main_window_size = Entry(frame_6 ,width=10)
+input_main_window_size.grid(row=0, column=1, padx=5)
+
 window_size_apply_button = Button(frame_6 , text="창 크기 적용", font=(selected_font, 12, "bold"), command=window_size_apply_button_function)
-window_size_apply_button.grid(row=0, column=0, padx=5)
+window_size_apply_button.grid(row=0, column=2, padx=5)
 
 
 

@@ -1,0 +1,8 @@
+Start Time: 2024/11/02 17:11:20
+End Time: 2024/11/02 17:11:24
+STDOUT: [2024/11/02 17:11:22]  :  update_labels  ���� ��� �󺧿� �ö��ִ� ��Ʈ������ id []
+[2024/11/02 17:11:22]  :  api_get_time  api_get_time value : 60
+[2024/11/02 17:11:22]  :  api_get_time  apitime value : 60000
+
+STDERR: N/A
+

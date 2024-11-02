@@ -2,7 +2,6 @@ from tkinter import *
 import json
 import os
 import requests
-import time
 import webbrowser
 import subprocess
 from tkinter import messagebox
